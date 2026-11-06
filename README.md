@@ -43,7 +43,7 @@ Ayrıntı: [data/README.md](data/README.md)
 ```bash
 git clone https://github.com/semihbuyukozkan/fuzzy-cognitive-diagnosis.git
 cd fuzzy-cognitive-diagnosis
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt   # "pip" başka bir Python'a bağlı olabilir; python3 -m pip güvenlidir
 ```
 
 ## Requirements

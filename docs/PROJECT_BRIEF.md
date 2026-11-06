@@ -143,3 +143,12 @@ Sunum metni ve Canva taslağı sohbet tarafında (Claude ile) yazılacak; deney 
 8. Neden MAKT kapsam dışı? Neden FrcSub + sentetik? Sentetik verinin döngüsellik sınırı.
 9. Katkının gerekçesi ve sonuçların yorumu (iyileşme olmasa da).
 10. Sınırlılıklar: kapalı veri, ikili Q, sentetik veri, tek veri seti, MCMC yakınsaması.
+
+## Uygulama sırasında brief'ten sapmalar (2026-11-07)
+- **K2'de 7. ablation satırı:** "+zaman (Eş.3 çarpımı)" eklendi (makalenin yazımına en yakın okuma).
+- **FrcSub'da MH modelleri 3 başlangıçla koşuldu** (eğitim olabilirliği en yüksek zincir seçilir); sebep: MFCD-core çok modlu, tek zincir bazen kötü çukurda.
+- **K1/K2'nin sentetik kısmı yalnızca %60 eğitim oranında** koşuldu (süre kısıtı). FrcSub K1: 0.5/0.6/0.7.
+- **Ek ölçütler:** AUC ve kalibrasyon (ortalama tahmin − gerçek oran) eklendi; sebep: K2'de F1 artışının şüpheli çıkması.
+- **E4** ayrı, tek işlemli süre ölçümü olarak yapıldı (E1-K2'deki paralel koşu süreleri kıyaslanamaz).
+- **Teslim tarihi:** yönergede 27.10.2026 / sunumlar 03.11.2026 yazıyor; tarih ileri alındı (kullanıcı onayı).
+- **Rapor** HTML'den Chrome ile PDF'e üretilir (LaTeX kurulu değil): report/build_report.py.
