@@ -11,3 +11,8 @@ Raporun "Generative AI Usage Disclosure" bölümü bu dosyadan beslenecektir.
 | 2026-11-06 | Claude Code | A4: Metropolis-Hastings kestirimi, geri kazanım betiği ve testleri | Adım boyları ve yakınsama sonuçları betik çıktısından alındı |
 | 2026-11-06 | Claude Code | A5: metrikler, bölme, IRT-2PL/DINA baseline'ları, deney koşucusu, E1 ve grafik | Sayılar betik çıktısından; yorumlar öğrenci tarafından gözden geçirilecek |
 | 2026-11-06 | Claude Code | A6: makale okuması, yakınsama tanıları (R-hat), 3 başlangıçlı E1, K1 ve K2 deneyleri, negatif kontrol, AUC/kalibrasyon analizi | Süre faktörünün F1 'kazancı' negatif kontrol ve AUC ile çürütüldü; sonuçlar betik çıktısından |
+
+## A7: rapor iskeleti (2026-11-07)
+- Claude Code ile yönergenin 11 bölümüne göre rapor (report/report_template.html) ve derleyici (report/build_report.py) yazıldı;
+  tablolar CSV'lerden otomatik üretilir, PDF Chrome (headless) ile alınır. Kaynaklar web aramasıyla doğrulandı (references/README.md).
+- Yazar kontrol listesi: rapordaki her cümlenin repodaki sonuçla uyumu, Generative AI Disclosure metni ve kaynakların okunması yazar tarafından yapılmalıdır.

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Fuzzy Cognitive Diagnosis: Reproduction and Evaluation of Fuzzy Extensions</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm 20mm 18mm; }
+  body { font-family: "Times New Roman", Times, serif; font-size: 10.5pt; line-height: 1.36; color: #111; text-align: justify; }
+  h1 { font-size: 17pt; text-align: center; margin: 0 0 4pt; line-height: 1.2; }
+  .sub { text-align: center; font-size: 10.5pt; margin: 0 0 2pt; }
+  .abstract { margin: 10pt 12mm 6pt; font-size: 10pt; }
+  h2 { font-size: 12pt; margin: 13pt 0 4pt; page-break-after: avoid; }
+  h3 { font-size: 10.5pt; margin: 8pt 0 2pt; font-style: italic; page-break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  table { border-collapse: collapse; margin: 4pt auto 3pt; font-size: 8.8pt; width: 100%; page-break-inside: avoid; text-align: center; }
+  th, td { border-top: 0.6pt solid #888; border-bottom: 0.6pt solid #888; padding: 1.5pt 4pt; }
+  th { background: #efefef; }
+  td:first-child { text-align: left; }
+  figure { margin: 6pt 0; text-align: center; page-break-inside: avoid; }
+  figure img { max-width: 100%; max-height: 105mm; }
+  figcaption, .cap { font-size: 9pt; text-align: center; margin: 2pt 0 7pt; }
+  .eq { text-align: center; margin: 4pt 0; font-style: italic; }
+  .note { border-left: 2.5pt solid #2a78d6; padding-left: 7pt; margin: 5pt 0; font-size: 10pt; }
+  .flow { display: flex; justify-content: center; align-items: center; gap: 4pt; flex-wrap: wrap; font-size: 9pt; margin: 6pt 0; }
+  .flow div { border: 0.8pt solid #2a78d6; border-radius: 3pt; padding: 3pt 6pt; text-align: center; background: #f5f9ff; }
+  .flow span { color: #555; }
+  ol.refs { font-size: 9pt; padding-left: 20pt; text-align: left; }
+  ol.refs li { margin-bottom: 2pt; }
+  .pb { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>Fuzzy Cognitive Diagnosis: Reproduction of the MFCD Core and a Controlled Evaluation of Its Fuzzy Extensions</h1>
+<p class="sub"><b>Musa Semih Büyüközkan</b> (1306230099)</p>
+<p class="sub">Bulanık Mantık Dersi, Dönem Projesi, 2026-2027 Güz</p>
+<p class="sub">Kod ve veri betikleri: github.com/semihbuyukozkan/fuzzy-cognitive-diagnosis</p>
+
+<div class="abstract"><b>Özet (Abstract).</b> Bu çalışma, Zhang ve Wang'ın (2025) bulanık bilişsel tanı modelinin (MFCD) bulanık mantık çekirdeğini yeniden gerçekleştirir:
+sigmoid üyelik fonksiyonu, objektif sorularda bulanık VE (t-norm), subjektif sorularda bulanık VEYA (t-conorm), bilgi açığı, slip/guess ve
+Metropolis-Hastings (MH) ile parametre kestirimi. Makalenin dikkat tabanlı bileşeni (MAKT) kapsam dışıdır. Çekirdek, kamuya açık FrcSub verisinde
+IRT-2PL, DINA ve FuzzyCDF-orig ile 10 seed üzerinden karşılaştırılmıştır. Özgün katkı iki kontrollü deneydir: (K1) bulanık operatör ailelerinin karşılaştırılması,
+(K2) makalenin zaman, süre ve bilgi açığı eklemelerinin sentetik veride ablation'ı ve bir negatif kontrol. Sonuçlar: MFCD-core, FuzzyCDF-orig'i geçmedi
+(F1 farkı yaklaşık -0.003); operatör seçimi gerçek veride etkisiz; K2'de görülen F1 artışı (+0.053) kalibrasyon kaymasından kaynaklanan bir
+yapaylık olarak çıktı: eşikten bağımsız AUC hiçbir faktörle artmadı ve negatif kontrolde de aynı F1 artışı görüldü. Makalenin iddiası bizim koşullarımızda
+yeniden üretilemedi; bu, makalenin yanlış olduğu anlamına gelmez, çünkü çalışmamız MAKT'ı, makalenin kapalı verisini ve belirsiz bırakılmış ağırlık
+uygulamalarını içermemektedir.</div>
+
+<h2>1. Introduction</h2>
+<p><b>Problem.</b> Bir öğrencinin henüz çözmediği bir alıştırmadaki başarısını, geçmiş cevaplarından tahmin etmek eğitimde kişiselleştirilmiş öneri sistemlerinin temel
+adımıdır. Klasik tanı modelleri (DINA gibi) bir beceriyi "var/yok" diye ikili ele alır; oysa öğrencinin bir beceriye sahip olma durumu kısmidir. Bulanık kümeler [9]
+bu kısmi sahipliği 0 ile 1 arasında bir <i>üyelik derecesi</i> ile ifade eder. FuzzyCDF [2], [3] bu fikri bilişsel tanıya taşımıştır.</p>
+<p><b>Referans makale.</b> Zhang ve Wang [1], FuzzyCDF'yi üç eklemeyle genişletir: cevabın kaydedilme zamanına göre ağırlık, cevap süresine göre ağırlık ve bilgi açığı
+(becerinin bir soru için derecelendirilmiş önemi). Bunu çok başlı dikkat mekanizmalı (MAKT) bir derin ağla birleştirir.</p>
+<p><b>Amaç ve kapsam.</b> Dönem projesi için yeniden gerçekleştirme kapsamı (MRR) şöyle belirlendi: makalenin <i>bulanık mantık çekirdeği</i> (MFCD-core) uygulanır;
+MAKT uygulanmaz. Kod tamamen bu projede yazılmıştır, makale yazarlarının resmi kodu kullanılmamıştır. Çalışmanın üç katkısı vardır:
+(i) çekirdeğin FrcSub üzerinde baseline'larla karşılaştırması ve makale eğilimleriyle kıyası; (ii) MCMC yakınsama kanıtı; (iii) iki özgün kontrollü deney (K1, K2).
+Çalışma boyunca ilke şuydu: hiçbir sayı elle yazılmaz, rapordaki her tablo <code>results/tables</code> altındaki betik çıktılarından üretilir.</p>
+
+<h2>2. Related Work</h2>
+<p>Bilişsel tanı modelleri, öğrencinin gizli becerilerini soru-beceri (Q) matrisi aracılığıyla cevaplarla ilişkilendirir. DINA [4] bağlayıcı (conjunctive) ikili modeldir: soruyu
+çözmek için gereken tüm becerilere sahip olmak gerekir, slip ve guess parametreleri gürültüyü karşılar. FuzzyCDF [2], [3] becerileri bulanıklaştırır ve hem objektif hem
+subjektif soruları (kısmi puan) aynı çatıda modeller. Derin öğrenme tabanlı yaklaşımlar iki hat izler: bilgi izleme (knowledge tracing) modelleri DKT [5] ve DKVMN [6]
+öğrencinin zamansal gelişimini yakalar; NeuralCDM [7] ise etkileşim fonksiyonunu sinir ağıyla öğrenir ve Q matrisini kullanır. Bu hatların kapsamlı bir derlemesi [8]'de
+(ön baskı) bulunur. Bulanık tabanlı modeller yorumlanabilirlik, derin modeller ise tahmin gücü sunma eğilimindedir; Zhang ve Wang [1] ikisini birleştirmeyi önerir.
+Bizim katkımız yeni bir model önermek değil, makalenin bulanık eklemelerinin etkisini kontrollü deneylerle ayrıştırmaktır.</p>
+
+<h2>3. Theoretical Background</h2>
+<p><b>Bulanık küme ve üyelik fonksiyonu.</b> Klasik kümede bir eleman ya vardır ya yoktur; bulanık kümede eleman bir <i>üyelik derecesi</i> μ ∈ [0,1] ile kümeye aittir [9].
+Bu çalışmada "beceri k'yı bilenler" bulanık kümesinin üyelik derecesi öğrencinin o beceri için yeterliliğidir. Üyelik fonksiyonu sigmoiddir (fuzzification adımı):</p>
+<div class="eq">a<sub>ik</sub> = 1 / (1 + exp(−1.7 · α<sub>k</sub> · (θ<sub>i</sub> − β<sub>k</sub>)))&nbsp;&nbsp;&nbsp;(1)</div>
+<p>Burada θ<sub>i</sub> öğrencinin gizli yetenek düzeyi, α<sub>k</sub> becerinin ayırt ediciliği, β<sub>k</sub> zorluğudur. Dilsel değişken (linguistic variable) kullanılmaz; "düşük/orta/yüksek"
+gibi etiketler yerine sürekli derece kullanılır.</p>
+<p><b>t-norm ve t-conorm.</b> Bulanık VE (kesişim) t-norm, bulanık VEYA (birleşim) t-conorm ile hesaplanır. Üç aile karşılaştırılır:
+Gödel (min / max), çarpım (a·b / a+b−ab) ve Łukasiewicz (max(0,a+b−1) / min(1,a+b)). Objektif sorularda tüm gerekli beceriler gerektiği için VE, subjektif sorularda bir beceri
+diğerini telafi edebildiği için VEYA kullanılır.</p>
+<p><b>Bilgi açığı.</b> Becerinin soru için önemi μ<sub>jk</sub> ∈ [0,1] ile derecelendirilir. Objektif soruda katkı ã = 1 − μ(1 − a) (eksik bilgi "açığı" önemiyle cezalandırılır),
+subjektif soruda ã = μ·a. Gödel VE ile birleşince η = 1 − max<sub>k</sub> μ<sub>jk</sub>(1 − a<sub>ik</sub>) elde edilir (makalenin Eş. 8-9'u). μ ikili Q'ya eşitse bu ifade tam olarak
+min<sub>k</sub> a<sub>ik</sub>'ye iner; bu eşdeğerlik rastgele girdilerle sayısal olarak test edilmiştir.</p>
+<p><b>Slip/guess ve karar.</b> P(r=1) = (1−s)·η + g·(1−η). P her zaman [g, 1−s] aralığında kaldığı için log(0) oluşmaz. Çıktı bir olasılıktır; 0.5 eşiği ile kesin
+"doğru/yanlış" kararına çevrilir. Bu eşikleme, klasik Mamdani sistemlerindeki <i>durulaştırma</i> (defuzzification) adımının bu problemdeki karşılığıdır. Sistem Mamdani veya Sugeno
+tipi bir kural tabanlı çıkarım değildir; "kural tabanı", Q matrisinin tanımladığı "gereken tüm becerilere sahipse" (VE) / "herhangi birine sahipse" (VEYA) kurallarıdır.
+Type-2 bulanık mantık, ANFIS veya Fuzzy C-Means kullanılmamıştır.</p>
+
+<h2>4. Original Method</h2>
+<p>Makalenin yöntemi iki katmandır. <b>MFCD</b> katmanı, Eş. (1) üyeliklerini zaman ağırlığı ω<sub>time</sub> = (T<sub>m</sub> − Δt)/T<sub>m</sub> (eski kayıt daha az ağırlıklı), cevap süresi ağırlığı (hızlı doğru
+cevap daha güvenilir) ve bilgi açığı ile birleştirerek her soru için η üretir; slip/guess ile cevap olasılığına çevirir; parametreler MH ile kestirilir. <b>MAKT</b> katmanı,
+BiGRU ve çok başlı dikkat ile zaman içindeki bilgi durumunu izler. Makale, kapalı bir İngilizce egzersiz verisinde 1000 öğrenci, 50 soru (38 okuma, 6 yazma, 6 çeviri) ve 25
+bilgi noktası ile çalışır; DINA, FuzzyCDF, My-FuzzyCDF, DKT ve C&amp;RM-MAKT ile PRE, Recall, F1, MAE ve RMSE üzerinden karşılaştırır. Makalenin Tablo 4'ünde MFCD-MAKT her ölçütte en iyi görünür
+(ör. nesnel sorularda %60 eğitimde F1 = 0.726).</p>
+<p><b>Eleştirel değerlendirme.</b> Güçlü yön: üç bulanık eklemenin sezgisel gerekçesi açıktır ve öznel soruları da kapsar. Sınırlılıklar: (i) veri kapalıdır, sonuçlar bağımsız doğrulanamaz;
+(ii) zaman ağırlığının Eş. 3'te yeterlilikle <i>çarpılması</i> ile olabilirlik ağırlığı olması arasında belirsizlik vardır, süre ağırlığının (Eş. 7) nerede kullanıldığı yazılı değildir; (iii) Tablo 4'te
+metin "her tipte ve oranda en iyi" derken subjektif %50 Recall'da C&amp;RM-MAKT (0.532) MFCD-MAKT'tan (0.525) yüksektir; (iv) PRE ve Recall'dan hesaplanan F1 tablodaki F1 ile tutmaz
+(ör. nesnel %60 MFCD-MAKT: PRE 0.894, Recall 0.631 için ≈0.74, tabloda 0.726); (v) FuzzyCDF'nin nesnel F1 değeri %60'tan %70'e düşer (0.557 → 0.537); (vi) MAKT'ın katkısı bulanık
+eklemelerin katkısından ayrıştırılmamıştır. Kurduğumuz ablation tam olarak bu son noktayı sınar. Makale sayıları <code>docs/paper_reference_results.md</code> dosyasında aktarılmıştır.</p>
+
+<h2>5. Reproduction Methodology</h2>
+<div class="flow">
+  <div>θ, α, β</div><span>→ sigmoid (Eş.1)</span><div>a<sub>ik</sub> üyelik</div><span>→ μ ile katkı</span><div>ã<sub>ijk</sub></div>
+  <span>→ VE / VEYA</span><div>η<sub>ij</sub></div><span>→ slip, guess</span><div>P(doğru)</div><span>→ eşik 0.5</span><div>karar</div>
+</div>
+<div class="cap">Şekil 1. Gerçekleştirilen bulanık sistem akışı (src/memberships.py, src/fuzzy_ops.py, src/mfcd.py).</div>
+<p><b>MFCD-core.</b> Şekil 1'deki akış vektörel olarak uygulanmıştır. Parametreler (θ, α, β, s, g ve isteğe bağlı μ) random-walk Metropolis-Hastings [10] ile kestirilir. Önseller bizim seçimimizdir:
+θ, β ~ N(0,1); log α ~ N(0, 0.5²); s, g ~ U(0, 0.4); μ ~ U(0,1]. Zincir 1500 adım (700 burn-in) ve her 10. örnek saklanır; tahmin, posterior ortalama olasılıktır.
+Adım boyları kabul oranı 0.25-0.55 olacak biçimde elle ayarlanmıştır.</p>
+<p><b>Ağırlıklar ve varsayımlarımız.</b> Zaman ve süre ağırlıkları, gözlemin olabilirliğe katkısını çarpan <i>olabilirlik ağırlıkları</i> olarak uygulanmıştır: w = ω<sub>time</sub>·(1 + λ·ωC), λ = 1,
+ωC = (maxC<sub>j</sub> − C<sub>ij</sub>)/maxC<sub>j</sub> · R<sub>ij</sub>. Bu normalizasyon ve λ bizim yorumumuzdur. Makalenin Eş. 3'ündeki gibi yeterliliği VE/VEYA'dan önce ω ile çarpan yazım da
+ayrı bir ayar olarak ("Eş.3 çarpımı") uygulanmıştır. Makale ağırlık uygulamasını belirsiz bıraktığı için bu iki uygulama makalenin gerçek yönteminin kanıtı değil,
+bizim iki okumamızdır.</p>
+<p><b>Baseline'lar.</b> <i>IRT-2PL</i>: MAP ile (L-BFGS, analitik gradyan <code>check_grad</code> ile doğrulanmış). <i>DINA</i>: Gibbs örnekleyici (K = 25 için EM pratik değildir); makaledeki higher-order DINA ile
+birebir aynı olmayabilir. <i>FuzzyCDF-orig</i>: MFCD çekirdeği, μ = Q (açık kapalı), min/max, ağırlıksız. <i>MFCD-core</i>: FuzzyCDF-orig'e ek olarak dereceli μ öğrenir.</p>
+<p><b>Yakınsama.</b> Seçilen yöntem, aynı veride 4 zincirden split R-hat [11], burn-in sonrası log-olabilirlik sürüklenme ölçüsü ve dağınık başlangıçlardır (Bölüm 8.2). Doğrulama:
+68 birim testi (elle hesaplı t-norm/t-conorm değerleri, min indirgeme, Łukasiewicz uç değerleri, metrikler, veri boyutları) geçmektedir.</p>
+
+<h2>6. Proposed Extension</h2>
+<p><b>Motivasyon.</b> Makale üç bulanık ekleme ile derin bir bileşeni aynı anda önerir ve katkılarını ayrıştırmaz. Bu yüzden iki kontrollü deney tasarlandı.</p>
+<p><b>K1 (ana katkı): operatör karşılaştırması.</b> Model sıfırdan, aynı seed, aynı eğitim/test bölmesi ve aynı hiperparametreyle eğitilir; yalnızca t-norm/t-conorm ailesi değişir
+(μ = Q, zaman/süre kapalı). FrcSub'da yalnızca VE; sentetik veride hem VE hem VEYA. Fark, aynı seed'deki Gödel koşusuna göre <i>eşleştirilmiş</i> hesaplanır.</p>
+<p><b>K2: faktör ablation'ı ve negatif kontrol.</b> Yalnızca sentetik veri (FrcSub'da zaman, süre ve öznel soru yoktur): "hiçbiri", +bilgi açığı, +zaman (olabilirlik), +zaman (Eş.3 çarpımı),
++bilgi açığı +zaman, +süre, hepsi; ayrıca IRT-2PL ve DINA. <b>Negatif kontrol</b>: aynı veri, ancak zaman ve süre cevaptan bağımsız üretilmiş (kayma yok, süre gürültü). Bu varyantta
+bir faktör yine de iyileşme gösteriyorsa, iyileşme faktörün bilgisinden değil yöntemin bir yan etkisinden gelir.</p>
+<p><b>Ek ölçütler.</b> PRE, Recall, F1 (doğru = pozitif, eşik 0.5), MAE, RMSE'ye ek olarak eşikten bağımsız AUC ve kalibrasyon (ortalama tahmin − gerçek doğru oranı) raporlanmıştır.
+Bu ek ölçütler, ilk K2 sonuçlarında F1 artışının şüpheli görünmesi üzerine eklenmiştir; ilk koşu ile tekrar koşu F1/RMSE'de birebir aynıdır.</p>
+
+<h2>7. Experimental Setup</h2>
+<p><b>FrcSub</b> [2]: kesir çıkarma testi, 536 öğrenci × 20 soru, 8 beceri, ikili cevap, yalnızca objektif; zaman/süre yoktur. Kaynak http://staff.ustc.edu.cn/~qiliuql/data/math2015.rar,
+SHA-256 doğrulaması ve boyut doğrulaması kodda yapılır; ham veri repoya konmaz. <b>Sentetik veri (açıkça sentetik)</b>: 1000 öğrenci, 50 soru (38 okuma, 6 yazma, 6 çeviri), 25 beceri,
+dereceli μ ∈ (0.5, 1], Gödel çıkarımıyla üretilmiş, Δt ~ U(0,180) gün, yetenek kayması 0.6, süre zaman/yetkinlikle ilişkili (etkili varyant). Veri bu faktörlerle üretildiği için onları modelleyen
+yöntem avantajlıdır (döngüsellik); sonuçlar "geri kazanılabilirlik" gösterir, gerçek dünya yararını kanıtlamaz.</p>
+<p><b>Protokol.</b> Her öğrencinin cevaplarının %40-90'ı eğitim, kalanı test; seed 0-9, her model için aynı bölme. E1'de oranlar 0.4-0.9 (raporda 0.5/0.6/0.7), K1 FrcSub'da 0.5/0.6/0.7, K1/K2 sentetikte yalnızca 0.6.
+MH modelleri FrcSub'da 3 farklı başlangıçla koşulur ve <i>eğitim</i> olabilirliği en yüksek zincir seçilir (test verisine bakılmaz). <b>Ortam:</b> Apple M4 Pro, Python 3.10.11, numpy 1.26.4, scipy 1.11.4, pandas 2.1.4,
+matplotlib 3.8.4 (requirements.txt). Süre ölçümü ayrı, tek işlemli ve tek zincirli bir koşuyla yapılmıştır (E4); deney koşuları 10 işlemde paralel çalıştığı için o koşulardaki süre sütunları kıyaslanmaz.</p>
+
+<h2>8. Results</h2>
+<h3>8.1 E1: FrcSub üzerinde yeniden gerçekleştirme (10 seed, ortalama ± std)</h3>
+{{E1}}
+<div class="cap">Tablo 1. FrcSub sonuçları. PRE/Recall/F1: doğru cevap pozitif sınıf. Kaynak: results/tables/e1_frcsub_summary.csv.</div>
+<figure><img src="../results/figures/e1_frcsub_f1_rmse.png"><figcaption>Şekil 2. Eğitim oranına göre F1 ve RMSE (40%-90%, ortalama ± std).</figcaption></figure>
+<p>Makale Tablo 4'ü ile eğilim karşılaştırması (mutlak sayılar veri ve protokol farkı nedeniyle kıyaslanmaz): <b>(uyuşan)</b> eğitim oranı arttıkça tüm modellerde iyileşme; DINA &lt; FuzzyCDF (F1: bizde
+0.813 &lt; 0.849, makalede 0.461 &lt; 0.557, %60). <b>(uyuşmayan)</b> Makalede DINA'nın PRE'si en düşüktür, bizde en yüksektir (0.850); MFCD-core, FuzzyCDF-orig'i geçmez (F1 −0.003 ... −0.005, RMSE
+aynı); makaledeki sıralama FuzzyCDF &lt; My-FuzzyCDF &lt; MFCD-MAKT bizde yeniden üretilemedi. <b>(test edilemeyen)</b> Subjektif &lt; objektif başarı, çünkü FrcSub'da subjektif soru yoktur.
+Olası nedenler: FrcSub'da zaman/süre bilgisi yoktur (üç eklemenin ikisi devre dışı); Q ikili olduğu için bilgi açığı zaten min'e iner, öğrenilen μ ek serbestlik ama ek bilgi değildir; makalenin büyük
+sıçraması MAKT'tan geliyor olabilir (kapsam dışı); μ öğrenmek çok modlu bir posterior doğurur. Makalenin kendi Tablo 4'ünde My-FuzzyCDF − FuzzyCDF F1 farkı nesnelde küçük (+0.069/+0.016/+0.024), öznelde büyüktür (+0.199/+0.140/+0.108);
+FrcSub öznel soru içermediği için bu etki burada ölçülemez.</p>
+
+<h3>8.2 MCMC yakınsama kanıtı</h3>
+<figure><img src="../results/figures/mcmc_trace.png"><figcaption>Şekil 3. Dört zincirin log-olabilirlik iz grafiği (kaynak: mcmc_convergence.py).</figcaption></figure>
+<p><b>Sentetik veri:</b> tahmin açısından yakınsama vardır: log-olabilirlik R-hat 1.000-1.010, θ için en fazla 1.027, dört zincirin test F1 değerleri arasındaki fark ≤ 0.002. Buna karşılık bireysel α, β, slip, guess ve özellikle μ
+için çok sayıda R-hat &gt; 1.1 vardır (MFCD-core, dağınık başlangıç: μ için 129 parametrenin 60'ı). Bu parametreler zayıf belirlenmiştir: <b>tahmin güvenilir, bireysel parametre değerleri yorumlanamaz.</b>
+<b>FrcSub:</b> gerçek bir sorun vardır. Dağınık başlangıçta log-olabilirlik R-hat 2.04 (FuzzyCDF-orig) ve 1.68 (MFCD-core); bir zincir uzun süre kötü bir platoda kalır. Çözüm olarak FrcSub'da 3 başlangıç ve en yüksek <i>eğitim</i>
+olabilirliği seçimi kullanıldı. E1'in 120 MH koşusundan 44'ünde (MFCD-core 39/60, FuzzyCDF-orig 5/60) üç başlangıcın eğitim log-olabilirlik ortalamaları arasındaki fark 30'dan büyüktür; yani MFCD-core başlangıca duyarlıdır
+ve 3 başlangıç bunu azaltır ama garanti etmez. İlk tek zincirli E1'de MFCD-core haksız yere kötü çıkmıştı (F1 farkı −0.008); düzeltmeden sonra yaklaşık −0.003. Sürüklenme ölçüsü yatay giden bir zinciri yakalamadığı için yardımcı bir göstergedir;
+asıl kanıt R-hat ve zincirler arası düzey farkıdır.</p>
+
+<h3>8.3 K1: operatör karşılaştırması</h3>
+{{K1}}
+<div class="cap">Tablo 2. K1 (μ = Q, zaman/süre kapalı). Kaynak: results/tables/k1_summary.csv.</div>
+<figure><img src="../results/figures/k1_operators.png"><figcaption>Şekil 4. K1: Gödel'e göre eşleştirilmiş fark.</figcaption></figure>
+<p>FrcSub'da operatörler pratikte aynıdır (%60'ta F1 0.849 / 0.848 / 0.847; Gödel'e göre fark −0.0007 ... −0.0019, std 0.0014-0.0032; çoğu hata çubuğu sıfırı keser). Sentetik veride sıralama Gödel &gt; çarpım &gt; Łukasiewicz'dir
+(F1 farkları −0.002 ... −0.008, RMSE farkları +0.0005 ... +0.0015), ancak <b>veri Gödel ile üretildiği için bu beklenen bir sonuçtur</b> ve operatörlerin genel üstünlüğünü göstermez. Pratik etki küçüktür (F1 ≤ 0.008).</p>
+
+<h3>8.4 K2: faktör ablation'ı ve negatif kontrol (sentetik, %60, 10 seed)</h3>
+<p><b>Zaman/süre etkili veri:</b></p>
+{{K2_ETKILI}}
+<p><b>Negatif kontrol (zaman/süre etkisiz):</b></p>
+{{K2_KONTROL}}
+<div class="cap">Tablo 3. K2. "ort. tahmin" modelin ortalama doğru olasılığı, "gerçek oran" testteki doğru oranı. Kaynak: results/tables/k2_summary.csv.</div>
+<figure><img src="../results/figures/k2_ablation.png"><figcaption>Şekil 5. K2: "hiçbiri"ye göre eşleştirilmiş fark (F1, RMSE, AUC; solda etkili veri, sağda negatif kontrol).</figcaption></figure>
+<figure><img src="../results/figures/k2_kalibrasyon.png"><figcaption>Şekil 6. K2 kalibrasyon kayması: ortalama tahmin olasılığı − gerçek doğru oranı.</figcaption></figure>
+<p><b>Ana bulgu.</b> "+süre" F1'i +0.053 artırır (0.618 → 0.671), ancak negatif kontrolde de +0.031 artırır (0.678 → 0.709); süre bilgisi cevaptan bağımsızken de F1 yükselmektedir. Neden: ωC yalnızca doğru cevaplara bonus
+verir; olabilirlik doğru cevaplara daha fazla ağırlık verince model "doğru" demeye kayar (ortalama tahmin 0.481 → 0.580, gerçek oran 0.481), doğru sınıf pozitif olduğu için Recall (0.59 → 0.79 civarı) ve F1 artar, PRE ve RMSE kötüleşir.
+Şekil 6 bu kaymayı gösterir. <b>Hiçbir faktör AUC'yi artırmadı</b> ("hiçbiri"ye göre AUC farkı: bilgi açığı −0.0005, zaman −0.0072, Eş.3 −0.0319, bilgi açığı+zaman −0.0085, süre −0.0019, hepsi −0.0066).
+Dereceli μ (+bilgi açığı) yalnızca +0.003 F1 verdi; AUC ve RMSE değişmedi. Makalenin yazımına en yakın okumamız (Eş.3 çarpımı) F1'i −0.104 düşürdü ve en kötü yakınsayan ayar oldu. DINA her koşulda en kötüdür (F1 −0.138, AUC −0.061),
+bu makaledeki DINA &lt; FuzzyCDF eğilimiyle uyumludur. IRT-2PL, MFCD varyantlarıyla aynı düzeyde ya da daha iyi RMSE'ye sahiptir.</p>
+
+<h3>8.5 E4: eğitim süresi ve baseline - geliştirilen karşılaştırması</h3>
+{{E4}}
+<div class="cap">Tablo 4. Ortalama süre (std); tek işlem, tek zincir, %60, 3 seed; Apple M4 Pro. Kaynak: results/tables/e4_sure_summary.csv.</div>
+{{BASELINE}}
+<div class="cap">Tablo 5. Yönergenin 6.2 biçiminde özet (FrcSub, %60; süre E4'ten, tek zincir). Değişim = geliştirilen − baseline. Geliştirilen yöntem daha iyi değildir.</div>
+
+<h2>9. Discussion</h2>
+<p><b>Neden makale eğilimi yeniden üretilemedi?</b> Dört olası neden var, hiçbiri bu çalışmada ayrıca test edilmemiştir: (1) FrcSub'da zaman, süre ve öznel soru yoktur, yani makalenin eklemelerinin çoğu devre dışıdır;
+(2) ikili Q'da bilgi açığı min'e indiğinden dereceli μ ek bilgi taşımaz, yalnızca serbestlik ekler ve posterior çok modlu olur; (3) makalenin büyük sıçraması MAKT'tan gelebilir; (4) ağırlık uygulaması makalede belirsizdir
+ve bizim iki yorumumuz makalenin yöntemi olmayabilir.</p>
+<p><b>Metrik seçimi.</b> F1, PRE ve Recall tek başına eşik ve yanlılık yüzünden yanıltabilir: yalnızca doğru cevapları ağırlıklandıran bir yöntem tahmini "doğru"ya kaydırarak F1'i yapay biçimde yükseltir.
+Negatif kontrol bu durumu yakalamıştır; bu nedenle AUC, RMSE ve kalibrasyon birlikte raporlanmalıdır. Aynı uyarı makale karşılaştırmalarını okurken de geçerlidir (Tablo 4'teki PRE/Recall/F1 tutarsızlıkları).</p>
+<p><b>Operatör seçimi.</b> Gerçek veride operatör ailesi pratikte fark etmemiştir. Olası (test edilmemiş) sezgi: Łukasiewicz VE'si birkaç beceri gerektiren sorularda η'yı sık sık tam 0'a indirir; bu bölgede olasılık
+sabit (≈ guess) kalır ve öğrenciler ayırt edilemez. Gödel'de yalnızca en zayıf beceri belirleyicidir.</p>
+<p><b>Olumsuz sonucun değeri.</b> Yönerge performans artışını zorunlu kılmaz. Burada değerli bulgu, makalenin eklemelerinin kontrollü bir ortamda sıralama başarısını artırmadığı ve F1'deki görünür kazancın
+bir kalibrasyon yapaylığı olduğudur. Bu, "makale yanlıştır" demek değildir: çalışmamız makalenin verisini, MAKT'ını ve kesin ağırlık formülünü içermez.</p>
+
+<h2>10. Limitations</h2>
+<ul style="margin:0 0 5pt 0; padding-left:18pt;">
+<li><b>Kapsam:</b> MAKT yoktur; makalenin verisi kapalıdır, yalnızca FrcSub (ikili, objektif, zaman/süre yok) kullanılabilmiştir.</li>
+<li><b>Kendi yorumlarımız:</b> zaman/süre ağırlıklarının olabilirlik ağırlığı olarak uygulanması, Eş. 7 normalizasyonu ve λ = 1, önseller, adım boyları ve DINA gerçekleştirmesi bizimdir; makalenin birebir yöntemi olmayabilir.</li>
+<li><b>Sentetik veri:</b> Gödel ve zaman/süre etkileriyle üretildiği için döngüseldir; negatif kontrol bu riski azaltır ama gerçek veri yerine geçmez. K1/K2 yalnızca %60 eğitim oranında koşulmuştur; "+süre" için yalnızca λ = 1 denenmiştir.</li>
+<li><b>MCMC:</b> FrcSub'da MFCD-core çok modludur (3 başlangıç yetmeyebilir); sentetikte bireysel α, β, μ, s, g zayıf belirlenmiştir ve yorumlanmaz. K2 tek zincirli MH ile koşulmuştur.</li>
+<li><b>İstatistik:</b> 10 seed; küçük farklar (örn. MFCD-core − FuzzyCDF-orig, F1 ≈ −0.003) seed gürültüsüne yakındır. Çoklu karşılaştırma düzeltmesi uygulanmamıştır.</li>
+<li><b>Süre:</b> E1-K2'deki paralel koşu süreleri kıyaslanamaz; süre karşılaştırması yalnızca E4'tendir (tek makine, 3 seed).</li>
+</ul>
+
+<h2>11. Conclusion</h2>
+<p>Makalenin bulanık çekirdeği (sigmoid üyelik, t-norm/t-conorm, bilgi açığı, slip/guess, MH) sıfırdan gerçekleştirilmiş, test edilmiş ve FrcSub'da baseline'larla karşılaştırılmıştır. Çekirdek IRT-2PL ve DINA'dan RMSE/F1'de iyidir, ancak
+FuzzyCDF-orig'i geçmemiştir; makalenin üç eklemesinin yararı kontrollü deneylerimizde gösterilememiştir. K1'de operatör ailesi gerçek veride etkisizdir; K2'de F1 kazancının kalibrasyon yapaylığı olduğu negatif kontrol ve AUC ile gösterilmiştir.
+Gelecek çalışma: süreyi cevabın olasılığına bağlayan bir model; çarpımla üretilmiş sentetik veride K1'in tekrarı; tüm eğitim oranlarında K1/K2; makalenin ağırlık formüllerinin yazarlarla netleştirilmesi; MAKT'ın ayrıştırılmış etkisi.</p>
+
+<h2>Generative AI Usage Disclosure</h2>
+<p>Bu projede üretken yapay zekâ aracı <b>Claude Code</b> (Anthropic) kullanılmıştır: kodun yazılması ve hata ayıklama, deney tasarımının tartışılması, bulanık mantık kavramlarının açıklanması, istatistiksel
+tanı yöntemlerinin (R-hat, eşleştirilmiş fark) önerilmesi, web aramasıyla literatür ve künye doğrulamasına yardım, README ve rapor metnini düzenleme. Kullanım ayrıntıları <code>docs/ai_usage_log.md</code> dosyasındadır.
+Rapordaki tüm deney sayıları, tablolar ve grafikler repodaki betiklerin çıktısıdır (<code>report/build_report.py</code> tabloları CSV dosyalarından üretir). Kaynaklar yayıncı/indeks sayfalarından tek tek doğrulanmıştır;
+makalenin kendi kaynakçasından kopyalama yapılmamıştır. Üretilen kodun ve metnin doğruluğunun kontrolü yazarın sorumluluğundadır.</p>
+
+<h2>References</h2>
+<ol class="refs">
+<li>Y. Zhang and Y. Wang, "A personalized recommendation algorithm for English exercises incorporating fuzzy cognitive models and multiple attention mechanisms," <i>Sci. Rep.</i>, vol. 15, Art. no. 11531, 2025, doi: 10.1038/s41598-025-96489-3.</li>
+<li>R. Wu, Q. Liu, Y. Liu, E. Chen, Y. Su, Z. Chen, and G. Hu, "Cognitive modelling for predicting examinee performance," in <i>Proc. 24th Int. Joint Conf. Artif. Intell. (IJCAI)</i>, 2015, pp. 1017-1024.</li>
+<li>Q. Liu, R. Wu, E. Chen, G. Xu, Y. Su, Z. Chen, and G. Hu, "Fuzzy cognitive diagnosis for modelling examinee performance," <i>ACM Trans. Intell. Syst. Technol.</i>, vol. 9, no. 4, Art. no. 48, pp. 48:1-48:26, 2018, doi: 10.1145/3168361.</li>
+<li>B. W. Junker and K. Sijtsma, "Cognitive assessment models with few assumptions, and connections with nonparametric item response theory," <i>Appl. Psychol. Meas.</i>, vol. 25, no. 3, pp. 258-272, 2001, doi: 10.1177/01466210122032064.</li>
+<li>C. Piech <i>et al.</i>, "Deep knowledge tracing," in <i>Adv. Neural Inf. Process. Syst. (NeurIPS)</i>, vol. 28, 2015, pp. 505-513.</li>
+<li>J. Zhang, X. Shi, I. King, and D.-Y. Yeung, "Dynamic key-value memory networks for knowledge tracing," in <i>Proc. 26th Int. Conf. World Wide Web (WWW)</i>, 2017, pp. 765-774, doi: 10.1145/3038912.3052580.</li>
+<li>F. Wang, Q. Liu, E. Chen, <i>et al.</i>, "Neural cognitive diagnosis for intelligent education systems," in <i>Proc. AAAI Conf. Artif. Intell.</i>, vol. 34, no. 4, 2020, pp. 6153-6161, doi: 10.1609/aaai.v34i04.6080.</li>
+<li>F. Wang, W. Gao, Q. Liu, J. Li, G. Zhao, Z. Zhang, Z. Huang, M. Zhu, S. Wang, W. Tong, and E. Chen, "A survey of models for cognitive diagnosis: New developments and future directions," arXiv:2407.05458, 2024 (preprint).</li>
+<li>L. A. Zadeh, "Fuzzy sets," <i>Inf. Control</i>, vol. 8, no. 3, pp. 338-353, 1965, doi: 10.1016/S0019-9958(65)90241-X.</li>
+<li>W. K. Hastings, "Monte Carlo sampling methods using Markov chains and their applications," <i>Biometrika</i>, vol. 57, no. 1, pp. 97-109, 1970, doi: 10.1093/biomet/57.1.97.</li>
+<li>A. Gelman and D. B. Rubin, "Inference from iterative simulation using multiple sequences," <i>Stat. Sci.</i>, vol. 7, no. 4, pp. 457-472, 1992, doi: 10.1214/ss/1177011136.</li>
+</ol>
+
+</body>
+</html>
