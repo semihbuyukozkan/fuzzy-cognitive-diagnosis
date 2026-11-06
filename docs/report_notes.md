@@ -58,7 +58,7 @@ düşüyor. 3 başlangıçla fark ~0.003'e indi. Tek zincirli sonuçlar nihai so
   0-2'sinde MFCD önde); RMSE: ≈ 0 (±0.001; 10 seed'in 2-6'sında MFCD önde). Yani F1'de küçük ama tutarlı bir
   dezavantaj, RMSE'de fark yok.
 
-**Makaleyle karşılaştırma (yalnızca eğilimler; Tablo 4 objektif sorular):**
+**Makaleyle karşılaştırma (yalnızca eğilimler; Tablo 4 objektif sorular; tüm makale sayıları docs/paper_reference_results.md'den):**
 - Eğitim oranı arttıkça iyileşme: **uyuşuyor** (bizim tüm modellerimizde F1 artıyor, RMSE azalıyor; fark küçük
   noktalarda seed gürültüsü içinde).
 - DINA < FuzzyCDF (F1): **uyuşuyor** (0.813 < 0.849 @%60; makalede 0.461 < 0.557).
