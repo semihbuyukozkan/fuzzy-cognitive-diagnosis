@@ -9,3 +9,4 @@ Raporun "Generative AI Usage Disclosure" bölümü bu dosyadan beslenecektir.
 | 2026-11-06 | Claude Code | A2: FrcSub indirme/doğrulama betiği, sentetik veri üreteci ve testleri | Veri boyutları gerçek indirme ile doğrulandı (536x20, K=8) |
 | 2026-11-06 | Claude Code | A3: bulanık operatörler, üyelik fonksiyonu, MFCD çekirdeği ve testleri | Formüller makale denklemleriyle eşlendi; testler elle hesaplandı |
 | 2026-11-06 | Claude Code | A4: Metropolis-Hastings kestirimi, geri kazanım betiği ve testleri | Adım boyları ve yakınsama sonuçları betik çıktısından alındı |
+| 2026-11-06 | Claude Code | A5: metrikler, bölme, IRT-2PL/DINA baseline'ları, deney koşucusu, E1 ve grafik | Sayılar betik çıktısından; yorumlar öğrenci tarafından gözden geçirilecek |
