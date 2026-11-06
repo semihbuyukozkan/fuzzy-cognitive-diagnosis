@@ -128,3 +128,42 @@ VE katmanı VEYA katmanından daha duyarlı.
 - **Süre sütunları karşılaştırılamaz:** 10 süreç aynı anda koştuğundan koşular birbirini farklı oranda yavaşlattı (ör. aynı
   iş 105 sn ile 302 sn arasında ölçüldü). Süre karşılaştırması (E4) ayrı, tek süreçli ve ayrı bir koşuyla yapılacak.
 - Log-olabilirlik 0'a gitmedi: Łukasiewicz'de η = 0 olsa bile P ≥ guess > 0 (testle doğrulandı, `tests/test_a6.py`).
+
+## K2: faktör ablation'ı (yalnızca sentetik) ve NEGATİF KONTROL
+Kaynak: `experiments/proposed/k2_ablation.py` -> `results/tables/k2_{raw,summary,paired}.csv`; grafik
+`results/figures/k2_ablation.png` (`plot_k2.py`). 7 ayar + IRT-2PL + DINA, iki veri varyantı ("synthetic": zaman/süre
+etkili; "synthetic_null": negatif kontrol, zaman ve süre cevaptan bağımsız), oran 0.6, 10 seed, tek zincirli MH
+(sentetikte zincirler tahmin açısından tutarlı; bkz. yakınsama bölümü). Karşılaştırma "hiçbiri"ye göre eşleştirilmiş fark.
+Yeniden koşu birebir aynı sonucu verdi (F1/RMSE farkı 0.0, 180 satır). AUC ve kalibrasyon sütunları ikinci koşuda eklendi.
+
+**Ana bulgu (olumsuz ve rapora olduğu gibi girecek): hiçbir faktör AUC'yi (eşikten bağımsız sıralama başarısı) artırmadı.**
+"hiçbiri"ye göre AUC farkı (etkili sentetik): +bilgi açığı -0.0005; +zaman (olab.) -0.0072; +zaman (Eş.3) -0.0319;
++bilgi açığı +zaman -0.0085; +süre -0.0019; hepsi -0.0066. Hiçbirinde 10 seed'in çoğunda iyileşme yok.
+
+**F1'deki "kazançlar" kalibrasyon kaymasıdır:**
+- "+süre (bizim yorum)" F1'i +0.053 artırıyor (etkili) ve +0.031 artırıyor (NEGATİF KONTROL, süre bilgisizken bile).
+  Aynı anda Recall 0.59 -> 0.79, PRE 0.65 -> 0.58, RMSE kötüleşiyor (+0.011) ve ortalama tahmin 0.58'e çıkıyor (gerçek
+  doğru oranı 0.48). Açıklama: ωC yalnızca DOĞRU cevaplara bonus veriyor (yanlışta ωC = 0), olabilirlik doğru cevaplara
+  daha fazla ağırlık verince model "doğru" demeye kayıyor; doğru sınıf pozitif olduğu için F1 yükseliyor. Bu, süre bilgisinden
+  gelen bir fayda DEĞİL, bir eşik/yanlılık yan etkisi. Negatif kontrol bunu yakaladı.
+- "+zaman (olabilirlik)": F1 +0.0086 (etkili, 10/10 seed) ama kontrol veride -0.0022; AUC her iki veride ≈ -0.007/-0.008 ve
+  RMSE kötüleşiyor (+0.003). F1 artışı küçük ve ortalama tahmin 0.481 -> 0.494'e kayıyor; yani sıralama iyileşmedi.
+- "+zaman (Eş.3 çarpımı)" (makalenin yazımı, bizim uygulamamızla): F1 -0.104 (etkili) ve -0.128 (kontrol); AUC -0.032 / -0.058;
+  RMSE +0.011 / +0.019. Yeterliliği (T-Δt)/T ile çarpmak tahminleri aşağı çekiyor (ort. P 0.454). Makaledeki yazımın bizim
+  uygulamamız bu şekilde işe yaramadı; makalenin gerçekte ne yaptığını bilmiyoruz (belirsizlik notu: assumptions.md).
+- "+bilgi açığı" (dereceli μ): F1 +0.0033 (etkili, 10/10 seed) ve +0.0012 (kontrol, 7/10); AUC ve RMSE ≈ değişmez. Etki
+  çok küçük. Veride μ dereceli üretildiği halde MH ile μ'yü öğrenmek zor (çok parametre, zayıf belirlenmişlik).
+- Baseline'lar: IRT-2PL, MFCD varyantlarıyla aynı düzeyde ya da daha iyi MAE/RMSE'ye sahip (MAE 0.425 vs 0.435);
+  DINA açık farkla en kötü (F1 -0.138, AUC -0.061), makaledeki DINA < FuzzyCDF eğilimiyle uyumlu.
+
+**Yorum (sade):** Veriyi zaman ve süre etkisiyle ürettik, ama bu bilgileri "gözlem ağırlığı" olarak kullanmak (veya
+Eş. 3 gibi çarpmak) modelin sıralama başarısını artırmadı. Olası nedenler (test edilmemiş): üretecimizin zaman/süre
+etkileri zayıf olabilir; ağırlıklandırma bu bilgiyi kullanmanın zayıf bir yolu olabilir (süreyi cevabın *olasılığına*
+bağlayan bir model daha uygun olurdu); tek zincirli MH gürültüsü. Bu yüzden sonuç "faktörler geri kazanılabiliyor" diye
+okunmamalı; **bizim uygulamamızda geri kazanılamadılar**. F1 kazançları AUC ve kalibrasyonla çelişiyor.
+**Rapor dili:** F1/PRE/Recall tek başına eşik ve yanlılık yüzünden yanıltabilir; bu yüzden AUC ve RMSE birlikte raporlanır.
+**Sentetik sonuçlar** "faktörler geri kazanılabiliyor mu" sorusunu cevaplar, "gerçek hayatta işe yarar mı" sorusunu cevaplamaz.
+
+**Yakınsama:** K2'nin 140 MH koşusunda sürüklenme ölçüsü ortalaması 0.15-0.78 (en yüksek: Eş.3 çarpımı, 0.50/0.78).
+Eş.3 ayarı en kötü yakınsayan ayardı.
+**Eksikler:** K2 yalnızca oran 0.6'da; "+süre" ayrı bir normalizasyon (λ=1) ile denendi, farklı λ denenmedi.
