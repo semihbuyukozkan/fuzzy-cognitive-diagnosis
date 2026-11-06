@@ -63,8 +63,14 @@ def membership(theta, alpha, beta):
     return 1.0 / (1.0 + np.exp(-z))
 
 
-def generate(seed=0):
-    """Verilen seed ile tamamen tekrarlanabilir veri üretir."""
+def generate(seed=0, with_effects=True):
+    """Verilen seed ile tamamen tekrarlanabilir veri üretir.
+
+    with_effects=True : zaman kayması (DRIFT) ve süre bilgisi cevabın güvenilirliğini taşır.
+    with_effects=False: NEGATİF KONTROL. Zaman ve süre cevaplardan bağımsızdır (kayma yok,
+                        süre yalnızca gürültü). Dereceli μ ve slip/guess korunur. Bu varyantta
+                        zaman/süre faktörlü modeller baseline'dan belirgin iyiyse bu bir uyarıdır.
+    """
     rng = np.random.default_rng(seed)
     N, J, K = N_STUDENTS, N_ITEMS, N_SKILLS
 
@@ -91,13 +97,14 @@ def generate(seed=0):
     slip = rng.uniform(0.02, 0.15, size=J)
     guess = rng.uniform(0.02, 0.25, size=J)
 
+    drift = DRIFT if with_effects else 0.0
     # Cevap zamanları: kaç gün önce verildi
     delta_t = rng.uniform(0.0, T_M, size=(N, J))
 
     # η hesabı: her (öğrenci, soru) için, o andaki yetenekle
     eta = np.zeros((N, J))
     for j in range(J):
-        theta_t = theta - DRIFT * delta_t[:, j] / T_M            # (N,)
+        theta_t = theta - drift * delta_t[:, j] / T_M            # (N,)
         a = membership(theta_t, alpha, beta)                      # (N, K)
         if is_subj[j]:
             eta[:, j] = (mu[j][None, :] * a).max(axis=1)          # VEYA
@@ -110,11 +117,12 @@ def generate(seed=0):
 
     # Cevap süresi (saniye): log-normal; yetkin ve doğru -> hızlı, şans -> çok hızlı
     base = rng.uniform(40, 200, size=J)                            # sorunun tipik süresi
-    speed = np.exp(-0.5 * (eta - 0.5))
+    speed = np.exp(-0.5 * (eta - 0.5)) if with_effects else 1.0
     duration = base[None, :] * speed * np.exp(rng.normal(0, 0.25, size=(N, J)))
     # Şansla doğru bilenler (η düşükken doğru çıkanlar) çok hızlı cevaplar
     lucky = (R == 1) & (rng.random((N, J)) < (1.0 - eta) * guess[None, :] / np.maximum(p, 1e-9))
-    duration = np.where(lucky, duration * 0.3, duration)
+    if with_effects:
+        duration = np.where(lucky, duration * 0.3, duration)
 
     return SyntheticData(R=R, Q=Q, mu=mu, is_subjective=is_subj, item_type=item_type,
                          delta_t=delta_t, duration=duration, theta=theta, alpha=alpha,
