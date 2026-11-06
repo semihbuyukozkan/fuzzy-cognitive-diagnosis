@@ -8,9 +8,13 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.experiment import RATIOS, SEEDS, run_grid
+from src.experiment import RATIOS, SEEDS, MfcdSpec, run_grid
 
 MODELLER = ["IRT-2PL", "DINA", "FuzzyCDF-orig", "MFCD-core"]
+# FrcSub'da MH zincirleri bazen kötü bir yerel çukura düşüyor (bkz. docs/report_notes.md, mcmc_convergence).
+# Çözüm: iki MH modeli de 3 farklı başlangıçla çalışır, eğitim olabilirliği en yüksek zincir seçilir.
+SPEC = {"FuzzyCDF-orig": MfcdSpec(learn_mu=False, n_restart=3),
+        "MFCD-core": MfcdSpec(learn_mu=True, n_restart=3)}
 TABLO = Path(__file__).resolve().parents[2] / "results" / "tables"
 
 
@@ -23,7 +27,8 @@ def ozet(df):
 
 
 def main():
-    jobs = [("frcsub", m, r, s) for m in MODELLER for r in RATIOS for s in SEEDS]
+    jobs = [("frcsub", m, r, s) + ((SPEC[m],) if m in SPEC else ())
+            for m in MODELLER for r in RATIOS for s in SEEDS]
     print(f"{len(jobs)} koşu başlıyor...")
     df = pd.DataFrame(run_grid(jobs)).sort_values(["model", "oran", "seed"])
     TABLO.mkdir(parents=True, exist_ok=True)

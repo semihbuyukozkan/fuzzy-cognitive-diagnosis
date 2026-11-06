@@ -41,10 +41,16 @@ class Params:
     guess: np.ndarray   # (J,)
 
 
-def eta_matrix(a, Q, mu, is_subj, and_kind="godel", or_kind="godel"):
-    """Soru başarı derecesi η (N, J). a: (N,K), Q/mu: (J,K), is_subj: (J,) bool."""
+def eta_matrix(a, Q, mu, is_subj, and_kind="godel", or_kind="godel", omega=None):
+    """Soru başarı derecesi η (N, J). a: (N,K), Q/mu: (J,K), is_subj: (J,) bool.
+
+    omega (N, J) verilirse yeterlilik a, VE/VEYA'dan ÖNCE bu çarpanla ölçeklenir:
+    a_eff = a · ω. Bu, makalenin Eş. 3/5/6 yazımıdır (µ_k(m) · (T-Δt)/T).
+    """
     on = Q[None, :, :] == 1                                     # (1, J, K)
     a3 = a[:, None, :]                                          # (N, 1, K)
+    if omega is not None:
+        a3 = a3 * omega[:, :, None]                             # (N, J, K)
     # Objektif: ilgisiz beceri -> 1 (VE için nötr)
     obj = np.where(on, 1.0 - mu[None] * (1.0 - a3), 1.0)        # (N, J, K)
     # Subjektif: ilgisiz beceri -> 0 (VEYA için nötr)

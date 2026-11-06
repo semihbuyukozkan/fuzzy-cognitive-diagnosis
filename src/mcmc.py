@@ -39,6 +39,8 @@ class MCMCConfig:
     or_kind: str = "godel"
     learn_mu: bool = True      # False -> μ = Q (bilgi açığı kapalı, orijinal FuzzyCDF mantığı)
     seed: int = 0
+    overdispersed_init: bool = False   # True: zincirler birbirinden farklı noktalardan başlar (R-hat için)
+    store_samples: bool = False        # True: seyreltilmiş parametre örneklerini de döndür
 
 
 def _cell_ll(R, P, w, mask):
@@ -57,8 +59,11 @@ def _init_theta(R, train_mask):
     return (score - score.mean()) / (score.std() + 1e-9)
 
 
-def run_mh(R, Q, is_subj, train_mask, w, cfg=MCMCConfig()):
-    """MH çalıştırır. Dönüş: sözlük (P_mean, theta_mean, params, kabul oranları, ll izi)."""
+def run_mh(R, Q, is_subj, train_mask, w, cfg=MCMCConfig(), omega=None):
+    """MH çalıştırır. Dönüş: sözlük (P_mean, theta_mean, params, kabul oranları, ll izi).
+
+    omega: (N, J) zaman çarpanı; verilirse η hesabında yeterlilikle çarpılır (Eş. 3 yazımı).
+    """
     rng = np.random.default_rng(cfg.seed)
     N, J = R.shape
     K = Q.shape[1]
@@ -69,16 +74,25 @@ def run_mh(R, Q, is_subj, train_mask, w, cfg=MCMCConfig()):
     alpha, beta = np.ones(K), np.zeros(K)
     slip, guess = np.full(J, 0.1), np.full(J, 0.1)
     mu = Qf.copy() if not cfg.learn_mu else 0.9 * Qf
+    if cfg.overdispersed_init:   # farklı zincirler farklı noktalardan başlasın
+        theta = theta + 0.7 * rng.standard_normal(N)
+        alpha = np.exp(0.4 * rng.standard_normal(K))
+        beta = 0.7 * rng.standard_normal(K)
+        slip, guess = rng.uniform(0.03, 0.3, J), rng.uniform(0.03, 0.3, J)
+        if cfg.learn_mu:
+            mu = Qf * rng.uniform(0.4, 1.0, (J, K))
     a = membership(theta, alpha, beta)
     eta = eta_matrix(a, Q, mu, is_subj, cfg.and_kind, cfg.or_kind)
     ll = _cell_ll(R, _prob(eta, slip, guess), w, train_mask)
 
     acc = {"theta": [0, 0], "alpha_beta": [0, 0], "slip_guess": [0, 0], "mu": [0, 0]}
     P_sum, n_kept, theta_sum, trace = np.zeros((N, J)), 0, np.zeros(N), []
+    S = {k: [] for k in ("theta", "alpha", "beta", "slip", "guess", "mu", "ll")}
 
     def eta_of(a_, items=slice(None), mu_=None):
         m = mu if mu_ is None else mu_
-        return eta_matrix(a_, Q[items], m[items], is_subj[items], cfg.and_kind, cfg.or_kind)
+        om = None if omega is None else omega[:, items]
+        return eta_matrix(a_, Q[items], m[items], is_subj[items], cfg.and_kind, cfg.or_kind, om)
 
     for it in range(cfg.n_iter):
         # 1) θ: tüm öğrenciler aynı anda önerilir, ayrı ayrı kabul edilir
@@ -141,8 +155,19 @@ def run_mh(R, Q, is_subj, train_mask, w, cfg=MCMCConfig()):
             P_sum += _prob(eta, slip, guess)
             theta_sum += theta
             n_kept += 1
+            if cfg.store_samples:
+                for k_, v_ in (("theta", theta), ("alpha", alpha), ("beta", beta), ("slip", slip),
+                               ("guess", guess), ("mu", mu[Q == 1]), ("ll", np.array([ll.sum()]))):
+                    S[k_].append(v_.copy())
 
+    post = np.array(trace[cfg.burn:])
+    yarim = len(post) // 2
+    # Sürüklenme ölçüsü: burn-in sonrası iznin ilk yarısı ile ikinci yarısının ortalama farkı,
+    # iz standart sapması cinsinden. 0'a yakınsa iz düzleşmiştir; büyükse hâlâ yükseliyor/iniyor.
+    drift = float(abs(post[:yarim].mean() - post[yarim:].mean()) / (post.std() + 1e-12))
     return {
+        "ll_drift": drift,
+        "samples": {k_: np.array(v_) for k_, v_ in S.items()} if cfg.store_samples else None,
         "P_mean": P_sum / n_kept,               # posterior ortalama cevap olasılığı
         "theta_mean": theta_sum / n_kept,
         "params": Params(theta, alpha, beta, slip, guess),
