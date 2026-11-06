@@ -104,6 +104,7 @@ Makalenin bulanık eklemelerinin etkisini ayrıştıran iki kontrollü deney (ay
 
 ```bash
 python3 -m experiments.proposed.k1_operators && python3 -m experiments.proposed.plot_k1
+python3 -m experiments.proposed.k1_product_veri   # döngüsellik kontrolü (çarpım verisi; ~15 dk)
 python3 -m experiments.proposed.k2_ablation  && python3 -m experiments.proposed.plot_k2 && python3 -m experiments.proposed.plot_k2_kalibrasyon
 python3 -m experiments.baseline.e4_sure      # süre ölçümü (tek işlem; ~10 dk)
 python3 -m report.build_report               # rapor PDF'i
@@ -111,7 +112,7 @@ python3 -m report.build_report               # rapor PDF'i
 
 ## Experimental Results
 - **E1 (FrcSub):** yukarıdaki tablo. MFCD-core, FuzzyCDF-orig'i geçmedi (F1 ≈ -0.003); IRT-2PL ve DINA'dan iyi F1/RMSE.
-- **K1:** FrcSub'da operatör ailesi pratikte fark etmedi (%60 F1: 0.849 / 0.848 / 0.847). Sentetikte Gödel > çarpım > Łukasiewicz, ancak veri Gödel ile üretildiği için bu beklenen bir sonuçtur. Grafik: `results/figures/k1_operators.png`.
+- **K1:** FrcSub'da operatör ailesi pratikte fark etmedi (%60 F1: 0.849 / 0.848 / 0.847). Sentetikte Gödel > çarpım > Łukasiewicz, ancak veri Gödel ile üretildiği için bu beklenen bir sonuçtur. Çarpımla üretilmiş sentetik veride bu sıralama yeniden çıkmadı (farklar çok küçük; `results/tables/k1_product_summary.csv`), yani sıralama üretece bağlı. Grafik: `results/figures/k1_operators.png`.
 - **K2:** "+süre" F1'i +0.053 artırıyor (0.618 → 0.671) fakat negatif kontrolde de +0.031 artırıyor; ortalama tahmin 0.481 → 0.580'e kayıyor (gerçek oran 0.481) ve **hiçbir faktör AUC'yi artırmıyor**. Yani F1 kazancı bir kalibrasyon yapaylığı. Grafikler: `results/figures/k2_ablation.png`, `results/figures/k2_kalibrasyon.png`.
 - **E4 (süre, tek işlem, tek zincir, ortalama sn):** FrcSub: IRT-2PL 0.03, DINA 1.33, FuzzyCDF-orig 6.21, MFCD-core 7.11. Sentetik: IRT-2PL 0.11, DINA 5.86, FuzzyCDF-orig 54.35, MFCD-core 64.82. (`results/tables/e4_sure_summary.csv`)
 

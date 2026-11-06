@@ -1,0 +1,13 @@
+veri,oran,model,metrik,fark_ort,fark_std,daha_iyi_seed,n_seed
+synthetic_product,0.6,VE=godel / VEYA=lukasiewicz,F1,-0.0030413708618932667,0.0021002856488941592,1,10
+synthetic_product,0.6,VE=godel / VEYA=product,F1,-0.0003669923525592367,0.0022197727584069397,5,10
+synthetic_product,0.6,VE=lukasiewicz / VEYA=godel,F1,0.0059552706473971154,0.003568311099449197,10,10
+synthetic_product,0.6,VE=product / VEYA=godel,F1,0.0028351520777306293,0.0021673171934549324,8,10
+synthetic_product,0.6,VE=godel / VEYA=lukasiewicz,RMSE,0.0003632452893344129,0.0002816209042726341,1,10
+synthetic_product,0.6,VE=godel / VEYA=product,RMSE,-2.4814359778746463e-06,0.00021774947939506755,5,10
+synthetic_product,0.6,VE=lukasiewicz / VEYA=godel,RMSE,0.0004757591285967255,0.0001908837627977449,0,10
+synthetic_product,0.6,VE=product / VEYA=godel,RMSE,-0.00010494926318065368,0.0001425313717220774,8,10
+synthetic_product,0.6,VE=godel / VEYA=lukasiewicz,AUC,-0.0006925017193316951,0.0006281966996437043,2,10
+synthetic_product,0.6,VE=godel / VEYA=product,AUC,3.7016026636749187e-06,0.0004989104756534383,5,10
+synthetic_product,0.6,VE=lukasiewicz / VEYA=godel,AUC,-0.0012592220243665352,0.0007058810515801063,0,10
+synthetic_product,0.6,VE=product / VEYA=godel,AUC,0.00016850919605402304,0.00041547330821970526,6,10

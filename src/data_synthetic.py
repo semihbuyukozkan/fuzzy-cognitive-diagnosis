@@ -63,10 +63,12 @@ def membership(theta, alpha, beta):
     return 1.0 / (1.0 + np.exp(-z))
 
 
-def generate(seed=0, with_effects=True):
+def generate(seed=0, with_effects=True, operator="godel"):
     """Verilen seed ile tamamen tekrarlanabilir veri üretir.
 
     with_effects=True : zaman kayması (DRIFT) ve süre bilgisi cevabın güvenilirliğini taşır.
+    operator="product": η'yı Gödel yerine ÇARPIM ailesiyle üretir (VE: Π ã_k, VEYA: 1 - Π(1 - ã_k)).
+                        K1'in döngüsellik kontrolü için: üreteç operatörü modelin operatöründen farklı olsun.
     with_effects=False: NEGATİF KONTROL. Zaman ve süre cevaplardan bağımsızdır (kayma yok,
                         süre yalnızca gürültü). Dereceli μ ve slip/guess korunur. Bu varyantta
                         zaman/süre faktörlü modeller baseline'dan belirgin iyiyse bu bir uyarıdır.
@@ -106,7 +108,13 @@ def generate(seed=0, with_effects=True):
     for j in range(J):
         theta_t = theta - drift * delta_t[:, j] / T_M            # (N,)
         a = membership(theta_t, alpha, beta)                      # (N, K)
-        if is_subj[j]:
+        on = Q[j] == 1
+        if operator == "product":                                 # çarpım ailesi (yalnızca Q'daki beceriler)
+            if is_subj[j]:
+                eta[:, j] = 1.0 - np.prod(1.0 - mu[j][None, on] * a[:, on], axis=1)   # VEYA
+            else:
+                eta[:, j] = np.prod(1.0 - mu[j][None, on] * (1.0 - a[:, on]), axis=1)  # VE (açık)
+        elif is_subj[j]:
             eta[:, j] = (mu[j][None, :] * a).max(axis=1)          # VEYA
         else:
             eta[:, j] = 1.0 - (mu[j][None, :] * (1.0 - a)).max(axis=1)  # VE (açık)

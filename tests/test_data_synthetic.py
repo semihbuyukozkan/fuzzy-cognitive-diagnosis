@@ -63,3 +63,12 @@ def test_yetenek_ile_basari_pozitif_iliskili():
 def test_dogru_orani_makul_aralikta():
     d = generate(seed=1)
     assert 0.25 < d.R.mean() < 0.75
+
+
+def test_product_operator_variant():
+    """operator="product": aynı seed, aynı yapı (Q, θ), ama cevaplar farklı; varsayılan (Gödel) değişmez."""
+    a = generate(seed=0)
+    b = generate(seed=0, operator="product")
+    assert (a.Q == b.Q).all() and (a.theta == b.theta).all()
+    assert (a.R != b.R).any()
+    assert (generate(seed=0).R == a.R).all()
