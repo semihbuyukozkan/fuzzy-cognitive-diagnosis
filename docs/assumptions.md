@@ -34,3 +34,11 @@ operatöründen ayırt edilemez. Sentetik veride μ dereceli üretilecektir.
 Sentetik veri zaman/süre etkisiyle üretildiğinden bu faktörleri içeren model doğal olarak
 avantajlıdır (döngüsellik). Sonuçlar faktörlerin *geri kazanılabilirliğini* gösterir, gerçek
 dünya faydasını kanıtlamaz.
+
+## Sentetik veri üretecinin tasarım kararları (bize ait)
+- Tek gizli yetenek θ_i; beceriler θ'dan sigmoid ile türetilir (FuzzyCDF ile aynı mantık).
+- Zaman etkisi: öğrenci zamanla gelişir, `θ(Δt) = θ − 0.6·Δt/180`. Eski kayıtlar güncel
+  duruma daha az bilgi taşır. Katsayı (0.6) keyfidir.
+- Süre etkisi: yetkin öğrenci daha hızlıdır; şansla doğru bilenler çok hızlıdır. Katsayılar keyfidir.
+- Subjektif sorular da ikili (0/1) üretilir; makaledeki kesirli puan oranı (Eş. 7) bu veride yoktur.
+- Subjektif başarının objektiften düşük çıkması üretecin parametrelerinden gelir, bir bulgu değildir.

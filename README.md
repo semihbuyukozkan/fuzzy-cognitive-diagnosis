@@ -19,7 +19,7 @@ Bir öğrencinin henüz çözmediği bir alıştırmadaki başarısını, geçmi
 Makalenin MFCD (geliştirilmiş fuzzy cognitive diagnosis) bileşeni: sigmoid üyelik fonksiyonu, objektif sorularda bulanık VE (t-norm), subjektif sorularda bulanık VEYA (t-conorm), bilgi açığı, slip/guess parametreleri ve Metropolis-Hastings ile parametre kestirimi. Dikkat tabanlı MAKT bileşeni **bilinçli olarak kapsam dışıdır**.
 
 ## Fuzzy System Architecture
-_Aşama A3'te eklenecek (şema ve açıklama)._
+
 
 ## Dataset
 - **FrcSub** (gerçek veri, kesir çıkarma): indirme betiği ile alınır, repoya konmaz.
