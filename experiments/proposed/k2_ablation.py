@@ -44,10 +44,10 @@ def main():
     ozet = ozet_tablo(df, ["veri", "model", "oran"])
     ozet.to_csv(TABLO / "k2_summary.csv", index=False)
     fark = pd.concat([eslestirilmis_fark(df, "hiçbiri", m, grup=("veri", "oran"), yuksek_iyi=y)
-                      for m, y in (("F1", True), ("RMSE", False))])
+                      for m, y in (("F1", True), ("RMSE", False), ("AUC", True))])
     fark.to_csv(TABLO / "k2_paired.csv", index=False)
     pd.set_option("display.width", 220)
-    print(ozet[["veri", "model", "F1_ort", "F1_std", "RMSE_ort", "RMSE_std", "sure_sn_ort"]].round(4).to_string(index=False))
+    print(ozet[["veri", "model", "F1_ort", "F1_std", "RMSE_ort", "AUC_ort", "ort_P_ort", "ort_R_ort"]].round(4).to_string(index=False))
     print(fark.round(4).to_string(index=False))
 
 

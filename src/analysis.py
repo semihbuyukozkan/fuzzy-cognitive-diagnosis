@@ -2,12 +2,12 @@
 import numpy as np
 import pandas as pd
 
-METRIKLER = ["PRE", "Recall", "F1", "MAE", "RMSE", "sure_sn"]
+METRIKLER = ["PRE", "Recall", "F1", "MAE", "RMSE", "AUC", "ort_P", "ort_R", "sure_sn"]
 
 
 def ozet_tablo(df, grup):
     """grup sütunlarına göre metriklerin ortalama ve std değerleri."""
-    g = df.groupby(grup)[METRIKLER]
+    g = df.groupby(grup)[[m for m in METRIKLER if m in df.columns]]
     out = g.mean().add_suffix("_ort").join(g.std().add_suffix("_std"))
     out["n_seed"] = g.size()
     return out.reset_index()

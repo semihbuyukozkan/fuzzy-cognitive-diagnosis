@@ -40,3 +40,19 @@ def test_bolme_oran_ve_tekrarlanabilirlik():
 def test_bolme_her_ogrencide_egitim_ve_test_var():
     a = split_per_student((10, 20), 0.9, seed=0)
     assert (a.sum(1) >= 1).all() and ((~a).sum(1) >= 1).all()
+
+
+def test_auc_elle_hesap():
+    from src.metrics import auc
+    assert auc([1, 1, 0, 0], [0.9, 0.8, 0.2, 0.1]) == pytest.approx(1.0)
+    assert auc([1, 1, 0, 0], [0.1, 0.2, 0.8, 0.9]) == pytest.approx(0.0)
+    # 4 (pozitif, negatif) çiftinden 3'ü doğru sıralı -> 0.75
+    assert auc([1, 1, 0, 0], [0.9, 0.3, 0.5, 0.1]) == pytest.approx(0.75)
+    assert auc([1, 0], [0.5, 0.5]) == pytest.approx(0.5)          # eşit skor = şans
+    assert auc([1, 1], [0.2, 0.9]) == 0.5                          # tek sınıf
+
+
+def test_kalibrasyon_alanlari():
+    R = np.array([[1, 0, 1, 0]])
+    m = evaluate(R, np.array([[0.9, 0.8, 0.7, 0.6]]), np.ones_like(R, bool))
+    assert m["ort_P"] == pytest.approx(0.75) and m["ort_R"] == pytest.approx(0.5)
