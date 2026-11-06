@@ -56,9 +56,11 @@ dünya faydasını kanıtlamaz.
 - **Süre ağırlığının (Eş. 7) kullanım yeri belirsiz:** Makale Şekil 1'de C_mn okunu η ile cevap puanı arasına
   (slip/guess katmanına) koyuyor, ama ωC'nin bu katmanı nasıl değiştirdiğini yazmıyor. Biz onu gözlem ağırlığı olarak
   kullanıyoruz (bizim yorumumuz).
-- **Makalenin kendi tablosu faktörlerin payını küçük gösteriyor:** Tablo 4'te My-FuzzyCDF (zaman+süre eklenmiş
-  FuzzyCDF) ile FuzzyCDF arasındaki fark küçük-orta (objektif F1: 0.552/0.573/0.561 − 0.483/0.557/0.537), asıl sıçrama
-  MAKT (BiGRU + dikkat) ile geliyor. Bu, MAKT'ı kapsam dışı bırakmanın sonuç karşılaştırmasını etkileyeceğini gösterir.
+- **Makalenin kendi tablosunda zaman/süre payı nesnelde küçük, öznelde büyük:** Tablo 4'te My-FuzzyCDF (zaman+süre
+  eklenmiş FuzzyCDF) − FuzzyCDF F1 farkı nesnel sorularda +0.069/+0.016/+0.024, öznel sorularda +0.199/+0.140/+0.108
+  (%50/60/70). Asıl sıçrama yine MAKT (BiGRU + dikkat) ile gelir. (Önceki taslakta yalnızca nesnel F1 verilmiş ve
+  "küçük" denmişti; öznel sütun eksikti, düzeltildi. Kaynak: `docs/paper_reference_results.md`.) FrcSub yalnızca
+  nesnel olduğundan bu etkiyi test edemeyiz; sentetik veri öznel soruları içerir.
 - **Makalenin FuzzyCDF/DINA sayıları bizimkinden çok farklı:** Makalede DINA için PRE 0.60-0.71 ve Recall 0.33-0.41;
   bizim FrcSub sonuçlarımızda PRE ≈ 0.85, Recall ≈ 0.76-0.80. Veri kapalı olduğundan nedenini bilemiyoruz; olası neden
   veri farkıdır (FrcSub'ın doğru oranı ≈ 0.53 ve sorular kolay/dengeli).

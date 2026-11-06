@@ -51,6 +51,9 @@ pip install -r requirements.txt
 Python 3.10, bağımlılıklar [requirements.txt](requirements.txt) dosyasında.
 
 ## How to Run
+**Canlı demo** (tek öğrenci/soru için fuzzification → kural → slip/guess → durulaştırma zinciri, ~5 sn):
+`python3 -m demo.canli_demo --ogrenci 12 --soru 5 --theta 2.0` (`--operator product` ile VE operatörü değiştirilebilir).
+
 Testler: `python3 -m pytest -q`. Deney komutları [Reproduction Experiments](#reproduction-experiments) bölümünde.
 
 ## Reproduction Experiments
