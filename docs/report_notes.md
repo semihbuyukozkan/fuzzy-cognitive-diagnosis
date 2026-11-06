@@ -167,3 +167,19 @@ okunmamalı; **bizim uygulamamızda geri kazanılamadılar**. F1 kazançları AU
 **Yakınsama:** K2'nin 140 MH koşusunda sürüklenme ölçüsü ortalaması 0.15-0.78 (en yüksek: Eş.3 çarpımı, 0.50/0.78).
 Eş.3 ayarı en kötü yakınsayan ayardı.
 **Eksikler:** K2 yalnızca oran 0.6'da; "+süre" ayrı bir normalizasyon (λ=1) ile denendi, farklı λ denenmedi.
+
+## E4: eğitim süresi (tek işlem, tek iş parçacığı; `experiments/baseline/e4_sure.py`)
+Apple M4 Pro, Python 3.10, %60 eğitim, 3 seed, MH modelleri TEK zincir (1500 yineleme). Ortalama sn (std):
+
+| Model | FrcSub (536×20) | Sentetik (1000×50) |
+|---|---|---|
+| IRT-2PL (MAP) | 0.03 (0.00) | 0.11 (0.08) |
+| DINA (Gibbs) | 1.33 (0.06) | 5.86 (0.11) |
+| FuzzyCDF-orig (MH) | 6.21 (0.02) | 54.35 (1.99) |
+| MFCD-core (MH) | 7.11 (0.04) | 64.82 (1.73) |
+| MFCD hepsi (μ+zaman+süre) | – | 64.33 (1.66) |
+
+Yorum: MH tabanlı modeller IRT'den ~2 büyüklük mertebesi, DINA'dan ~5-10 kat yavaş; μ öğrenmek ~%15-19 ek süre
+getiriyor, zaman/süre ağırlıkları ek maliyet getirmiyor (yalnızca olabilirlik ağırlığı). E1'de FrcSub MH modelleri
+3 başlangıçla koşulduğu için orada süre bunun yaklaşık 3 katıdır. E1-K2'deki paralel koşu `sure_sn` sütunları
+birbirleriyle KIYASLANMAZ; süre karşılaştırması yalnızca bu tablodan yapılır.
