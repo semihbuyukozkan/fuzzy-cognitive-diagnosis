@@ -57,12 +57,30 @@ Hem Q-matrisi hem zaman damgası hem cevap süresi hem de İngilizce içerik ta�
 - DINA (klasik, ayrık), IRT-2PL (referans), **FuzzyCDF-orijinal** (üç faktör kapalı, min/max). İsteğe bağlı: EduCDM'deki hazır uygulamalarla çapraz kontrol (kaynak göstererek). DKT/C&RM-MAKT yeniden gerçekleştirilmeyecek; makaledeki sayılarla yalnızca eğilim karşılaştırması yapılacak.
 
 ### 3.4 Özgün katkı
-**K1 — Fuzzy operatör karşılaştırması:** t-norm/t-conorm aileleri: Gödel (min/max), çarpım (a·b / a+b−ab), Łukasiewicz (max(0,a+b−1) / min(1,a+b)). Hem objektif hem subjektif katmanda.
-**K2 — Faktör ablation'ı:** zaman, süre, bilgi açığı faktörlerini tek tek/ikili aç-kapa (makale hepsini birlikte sunuyor, ayrı ayrı etkisini göstermiyor).
-**K3 (zaman kalırsa) — Gürültü dayanıklılığı:** etiketlerin %5/10/20'si çevrilerek.
+> **Revizyon (2026-11-06, A5 sonrası):** Katkı tasarımı sadeleştirildi. K3 çıkarıldı; K1 ana katkı; K2 yalnızca sentetik veride; sentetik veriye negatif kontrol eklendi. Gerekçeler `docs/report_notes.md` içinde.
+
+**K1 — Fuzzy operatör karşılaştırması (ANA KATKI):** Gödel (min/max), çarpım (a·b / a+b−ab), Łukasiewicz (max(0,a+b−1) / min(1,a+b)).
+- **FrcSub (yalnızca objektif sorular):** yalnızca t-norm (VE) karşılaştırılır. t-conorm (VEYA) bu veride kullanılmaz, çünkü subjektif soru yoktur.
+- **Sentetik veri:** hem VE hem VEYA. Tüm 9 kombinasyon yerine VE ailesi değişirken VEYA=Gödel, VEYA ailesi değişirken VE=Gödel (5 benzersiz ayar).
+- **Adil karşılaştırma:** her operatör için model sıfırdan eğitilir; aynı seed, aynı eğitim/test bölmesi, aynı hiperparametreler. Olasılıklar [ε, 1−ε] aralığında tutulur (Łukasiewicz tam 0 üretebilir; slip/guess ve kırpma ile log(0) engellenir ve test edilir).
+
+**K2 — Faktör ablation'ı (YALNIZCA SENTETİK VERİDE):** FrcSub'da zaman/süre verisi yoktur ve Q ikilidir (bilgi açığı min'e iner), bu yüzden üç faktörün ablation'ı orada yapılmaz. Ayarlar (6 satır):
+1. hiçbiri (FuzzyCDF-orig mantığı: μ=Q, ağırlıksız)
+2. + bilgi açığı (dereceli μ öğrenilir)
+3. + zaman
+4. + bilgi açığı + zaman
+5. + süre (Eş. 7; **bizim normalizasyon yorumumuz** diye etiketlenir)
+6. hepsi (makalenin tam önerisi; makalenin üç faktörünü birlikte de görmek için eklendi)
+
+**Negatif kontrol (sentetik veri):** üreteçte bir bayrakla iki varyant üretilir: (a) zaman/süre etkili, (b) etkisiz. (b)'de zaman/süre faktörlü modeller baseline'dan belirgin biçimde iyiyse bu bir uyarıdır (modelin başka bir şeyden yararlandığını gösterir) ve raporlanır. Not: (b)'de dereceli μ korunur, bu yüzden "+ bilgi açığı" satırı (b)'de de iyileşebilir; negatif kontrol yalnızca zaman/süre satırları içindir.
+
+**Sentetik sonuçların yorumu:** "faktörler geri kazanılabiliyor mu?" sorusunu cevaplar; "gerçek hayatta işe yarar mı?" sorusunu CEVAPLAMAZ.
+
+**Ek kontrol (yakınsama):** her MH koşusu için log-olabilirlik izinden basit bir sürüklenme ölçüsü kaydedilir; yakınsamayan koşular raporlanır.
+
 Başarı ölçütü: baseline'a karşı PRE/Recall/F1/MAE/RMSE ve çalışma süresi (yönerge §6.2 tablosu). İyileşme zorunlu değil; yorum zorunlu.
 
-**Önemli matematiksel not (rapora ve savunmaya girecek):** μ_jk ikili (=q_jk) iken `η_ij = 1 − max_k q_jk(1 − a_ik) = min_{k: q=1} a_ik`; yani bilgi açığı formülü Gödel t-norm'una (min) indirgenir. FrcSub'da (ikili Q) açık faktörü min operatöründen ayırt edilemez. Açığın anlamlı olması için μ'nün [0,1] aralığında derecelenmesi gerekir (Ω içinde öğrenilen μ, q ile maskelenmiş). Sentetik veride μ dereceli üretilecek. Bu bulgu K2'nin bir parçası olarak raporlanacak.
+**Önemli matematiksel not (rapora ve savunmaya girecek):** μ_jk ikili (=q_jk) iken `η_ij = 1 − max_k q_jk(1 − a_ik) = min_{k: q=1} a_ik`; yani bilgi açığı formülü Gödel t-norm'una (min) indirgenir. FrcSub'da (ikili Q) açık faktörü min operatöründen ayırt edilemez. Açığın anlamlı olması için μ'nün [0,1] aralığında derecelenmesi gerekir (Ω içinde öğrenilen μ, q ile maskelenmiş). Sentetik veride μ dereceli üretilecek. Bu bulgu K2'nin bir parçası olarak raporlanacak ve sayısal olarak da doğrulanacak (rastgele girdilerle η = min a eşitliğini gösteren test, `tests/test_mfcd.py`). Not: ikili Q üzerinde μ'yü *öğrenmek* (E1'deki MFCD-core) dereceli bir model olduğu için bu eşitlik kapsamında değildir; eşitlik μ = Q sabitken geçerlidir.
 
 **Sentetik veri uyarısı:** Sentetik veriyi zaman/süre etkisiyle üretirsek bu faktörleri içeren model doğal olarak kazanır (döngüsel). Raporda bunun "faktörlerin geri kazanılabilirliğini" gösterdiğini, gerçek dünya faydasını kanıtlamadığını açıkça yaz.
 
@@ -71,7 +89,11 @@ Başarı ölçütü: baseline'a karşı PRE/Recall/F1/MAE/RMSE ve çalışma sü
 - Tekrar: ≥10 farklı seed; ortalama ± standart sapma. Seed'ler sabit ve kayıtlı.
 - Metrikler: PRE, Recall, F1 (doğru=pozitif, eşik 0.5), MAE, RMSE, eğitim süresi.
 - Makale ile karşılaştırma: sayılar birebir eşleşmeyecek (veri kapalı). Karşılaştırılacak **eğilimler**: (i) model sıralaması DINA < FuzzyCDF < geliştirilmiş MFCD mi, (ii) eğitim oranı arttıkça iyileşme, (iii) subjektif < objektif başarı (yalnızca subjektif içeren veride).
-- E1: FrcSub üzerinde baseline'lar + MFCD-core. E2: sentetik veride aynısı + ablation (K2). E3: operatör karşılaştırması (K1) iki veride. E4: süre ölçümü.
+- **E1 (tamamlandı):** FrcSub üzerinde IRT-2PL, DINA, FuzzyCDF-orig, MFCD-core (μ öğrenilen).
+- **E2:** sentetik veride (a) etkili ve (b) etkisiz varyantlarda baseline'lar + K2 ablation (6 ayar); eğitim oranları 50/60/70, 10 seed.
+- **E3 (K1):** operatör karşılaştırması. FrcSub: yalnızca VE (3 ayar). Sentetik: VE ve VEYA (5 ayar).
+- **E4:** süre ölçümü (her koşunun eğitim süresi E1-E3 çıktılarından alınır).
+- Tüm MH koşularında yakınsama ölçüsü (log-olabilirlik sürüklenmesi) kaydedilir.
 
 ## 5. Klasör yapısı (yönergeye uygun)
 ```
