@@ -51,10 +51,37 @@ pip install -r requirements.txt
 Python 3.10, bağımlılıklar [requirements.txt](requirements.txt) dosyasında.
 
 ## How to Run
-_Kodlar eklendikçe doldurulacak._
+Testler: `python3 -m pytest -q`. Deney komutları [Reproduction Experiments](#reproduction-experiments) bölümünde.
 
 ## Reproduction Experiments
-_E1 (FrcSub), E2 (sentetik) ve E4 (süre) sonuçları eklenecek._
+**E1: FrcSub üzerinde karşılaştırma** (10 seed, ortalama ± std; ayrıntılı yorum: [docs/report_notes.md](docs/report_notes.md))
+
+```bash
+python3 -m src.data_frcsub                 # veriyi indir ve doğrula
+python3 -m experiments.baseline.e1_frcsub  # 240 koşu (~5 dk, 10 süreç)
+python3 -m experiments.baseline.plot_e1    # grafik
+python3 -m experiments.baseline.e1_table   # tablo
+```
+
+| Eğitim oranı | Model | PRE | Recall | F1 | MAE | RMSE | Süre (sn) |
+|---|---|---|---|---|---|---|---|
+| 50% | IRT-2PL | 0.814 ± 0.006 | 0.852 ± 0.007 | 0.832 ± 0.002 | 0.242 ± 0.001 | 0.367 ± 0.002 | 0.04 ± 0.01 |
+| 50% | DINA | 0.844 ± 0.005 | 0.755 ± 0.004 | 0.797 ± 0.003 | 0.302 ± 0.002 | 0.383 ± 0.001 | 1.76 ± 0.08 |
+| 50% | FuzzyCDF-orig | 0.820 ± 0.006 | 0.868 ± 0.005 | 0.843 ± 0.003 | 0.260 ± 0.001 | 0.357 ± 0.002 | 8.27 ± 0.07 |
+| 50% | MFCD-core | 0.820 ± 0.007 | 0.852 ± 0.013 | 0.836 ± 0.008 | 0.265 ± 0.004 | 0.359 ± 0.002 | 10.03 ± 0.07 |
+| 60% | IRT-2PL | 0.815 ± 0.007 | 0.855 ± 0.006 | 0.834 ± 0.005 | 0.241 ± 0.002 | 0.363 ± 0.004 | 0.04 ± 0.01 |
+| 60% | DINA | 0.850 ± 0.006 | 0.780 ± 0.010 | 0.813 ± 0.005 | 0.284 ± 0.003 | 0.372 ± 0.003 | 1.70 ± 0.08 |
+| 60% | FuzzyCDF-orig | 0.823 ± 0.005 | 0.877 ± 0.008 | 0.849 ± 0.005 | 0.253 ± 0.002 | 0.352 ± 0.003 | 8.57 ± 0.05 |
+| 60% | MFCD-core | 0.824 ± 0.007 | 0.858 ± 0.014 | 0.841 ± 0.007 | 0.257 ± 0.004 | 0.354 ± 0.004 | 10.11 ± 0.07 |
+| 70% | IRT-2PL | 0.816 ± 0.006 | 0.865 ± 0.007 | 0.840 ± 0.003 | 0.238 ± 0.002 | 0.357 ± 0.003 | 0.04 ± 0.01 |
+| 70% | DINA | 0.845 ± 0.005 | 0.795 ± 0.009 | 0.819 ± 0.005 | 0.272 ± 0.002 | 0.367 ± 0.003 | 1.71 ± 0.04 |
+| 70% | FuzzyCDF-orig | 0.826 ± 0.006 | 0.887 ± 0.007 | 0.856 ± 0.003 | 0.245 ± 0.002 | 0.346 ± 0.003 | 8.59 ± 0.05 |
+| 70% | MFCD-core | 0.830 ± 0.009 | 0.870 ± 0.014 | 0.849 ± 0.006 | 0.248 ± 0.003 | 0.347 ± 0.004 | 10.16 ± 0.04 |
+
+![E1](results/figures/e1_frcsub_f1_rmse.png)
+
+Bulanık modeller (FuzzyCDF-orig, MFCD-core) DINA'yı geçiyor; bu makaledeki eğilimle uyumludur. Dereceli μ'nün
+eklendiği MFCD-core ise FrcSub'da FuzzyCDF-orig'i geçmiyor (F1 farkı küçük ama tutarlı). Bu beklenmeyen sonuç olduğu gibi raporlanmıştır.
 
 ## Proposed Extension
 - **K1:** Bulanık operatör karşılaştırması (Gödel, çarpım, Łukasiewicz).
