@@ -39,30 +39,64 @@ yalnızca betik çıktısından yazılır.
 - Not: üretecin zaman kayması (drift) modele verilmediği için ağırlıksız model bunu görmez;
   zaman ağırlığının etkisi K2 ablation'ında ölçülecek.
 
-## A5 / E1: FrcSub üzerinde karşılaştırma
-Kaynak: `experiments/baseline/e1_frcsub.py` -> `results/tables/e1_frcsub_{raw,summary}.csv`,
-`e1_frcsub_table.md`; grafik: `results/figures/e1_frcsub_f1_rmse.png`.
-Kurulum: 4 model x 6 eğitim oranı (%40-90) x 10 seed (0-9) = 240 koşu; MH 1500 adım (700 burn-in).
-Bölme: her öğrencinin kayıtlarının %p'si rastgele eğitim. Eşik 0.5, doğru cevap pozitif.
+## A5 / E1: FrcSub üzerinde karşılaştırma (GÜNCEL, 3 başlangıçlı MH)
+Kaynak: `experiments/baseline/e1_frcsub.py` -> `results/tables/e1_frcsub_{raw,summary}.csv`, `e1_frcsub_table.md`;
+grafik: `results/figures/e1_frcsub_f1_rmse.png`. 4 model x 6 eğitim oranı x 10 seed (0-9). MH 1500 adım (700 burn-in).
+**FrcSub'da iki MH modeli de 3 farklı başlangıçla çalışır; EĞİTİM olabilirliği en yüksek zincir seçilir** (test'e
+bakılmaz). Süreler 3 başlangıcın toplamıdır. Gerekçe aşağıdaki yakınsama bölümünde.
 
-**Bulgular (ortalama; %60 eğitim):**
-- F1: FuzzyCDF-orig 0.849 > MFCD-core 0.841 > IRT-2PL 0.834 > DINA 0.813.
-- MAE'de IRT-2PL en iyi (0.241), RMSE'de FuzzyCDF-orig (0.352) ile MFCD-core (0.354) başa baş.
-- Süre: IRT 0.04 sn, DINA 1.7 sn, FuzzyCDF-orig 8.6 sn, MFCD-core 10.1 sn (MH daha yavaş).
-- Tüm modellerde eğitim oranı arttıkça F1 artıyor, RMSE azalıyor (makale eğilimi ile uyumlu).
-- Makale eğilimi "DINA < FuzzyCDF" burada da var (F1 0.813 < 0.849). Bulanık modeller DINA'yı geçiyor.
+**Geçmiş (dürüstlük notu):** İlk E1 koşusu tek zincirle yapılmıştı; orada MFCD-core, FuzzyCDF-orig'in F1'inin ~0.008
+altındaydı. Yakınsama incelemesi MFCD-core'un FrcSub'da çok modlu olduğunu gösterdi; tek zincir bazen kötü çukura
+düşüyor. 3 başlangıçla fark ~0.003'e indi. Tek zincirli sonuçlar nihai sonuç değildir.
 
-**Beklenmeyen sonuç (olduğu gibi raporlanacak):** MFCD-core (μ öğrenilen) FrcSub'da
-FuzzyCDF-orig'den **daha iyi değil**. Seed bazında eşleştirilmiş fark (F1, MFCD-core − FuzzyCDF-orig):
-%50: -0.008 (10 seed'in 1'inde MFCD önde), %60: -0.008 (0/10), %70: -0.006 (0/10). Fark küçük ama tutarlı.
-Olası yorumlar (test edilmemiş hipotezler): (i) FrcSub'da Q ikili ve veri yalnızca objektif; dereceli
-μ ek serbestlik getirip 536 öğrencide aşırı uyuma yol açıyor olabilir; (ii) zaman/süre bilgisi yok,
-yani üç faktörden hiçbiri bu veride kullanılamıyor; (iii) MH ile 20x8'lik μ öğrenmek zor.
-Bu yorumlar K2 (ablation) ve sentetik veri deneyleriyle sınanacak.
+**Bulgular (%60 eğitim, 10 seed ortalaması):**
+- F1: FuzzyCDF-orig 0.849 > MFCD-core 0.845 > IRT-2PL 0.834 > DINA 0.813.
+- RMSE: FuzzyCDF-orig 0.352 = MFCD-core 0.352 < IRT-2PL 0.363 < DINA 0.372. MAE'de IRT-2PL en iyi (0.241).
+- PRE'de DINA en yüksek (0.850); Recall'da en düşük (0.780). DINA "doğru" demekte temkinli.
+- Süre: IRT 0.04 sn, DINA 1.7 sn, FuzzyCDF-orig 27.9 sn, MFCD-core 31.5 sn (3 başlangıç dahil; tek zincir ~9-10 sn).
+- Eşleştirilmiş fark (MFCD-core − FuzzyCDF-orig, aynı seed ve bölme), F1: -0.003 ... -0.005 (her oranda 10 seed'in
+  0-2'sinde MFCD önde); RMSE: ≈ 0 (±0.001; 10 seed'in 2-6'sında MFCD önde). Yani F1'de küçük ama tutarlı bir
+  dezavantaj, RMSE'de fark yok.
+
+**Makaleyle karşılaştırma (yalnızca eğilimler; Tablo 4 objektif sorular):**
+- Eğitim oranı arttıkça iyileşme: **uyuşuyor** (bizim tüm modellerimizde F1 artıyor, RMSE azalıyor; fark küçük
+  noktalarda seed gürültüsü içinde).
+- DINA < FuzzyCDF (F1): **uyuşuyor** (0.813 < 0.849 @%60; makalede 0.461 < 0.557).
+- DINA < FuzzyCDF (PRE): **uyuşmuyor.** Makalede DINA'nın PRE'si en düşük; bizde DINA'nın PRE'si en yüksek
+  (0.850 vs 0.823). Bizim DINA'mız Recall'ı feda ederek kesinliği artırıyor.
+- FuzzyCDF < geliştirilmiş model (MFCD): **uyuşmuyor.** MFCD-core, FuzzyCDF-orig'i geçmiyor. Nedenler:
+  (i) FrcSub'da zaman/süre bilgisi yok, makalenin üç faktöründen ikisi devre dışı; (ii) Q ikili, bilgi açığı
+  formülü zaten min'e iner, öğrenilen μ ek serbestlik ama ek bilgi değil; (iii) makalenin büyük sıçraması MAKT'tan
+  geliyor (kapsam dışı); (iv) μ öğrenmek çok modlu bir posterior yaratıyor, 3 başlangıç yetmeyebilir.
+- Mutlak sayılar karşılaştırılamaz (veri kapalı; makalede DINA PRE 0.60-0.71, bizde ≈0.85).
+- Subjektif < objektif başarı: FrcSub'da subjektif soru yok, **test edilemedi** (sentetikte test edilebilir ama
+  üreteç parametrelerinin sonucu olur, bulgu sayılmaz).
 
 **Ek notlar:**
-- DINA kendi gerçekleştirmemiz (Gibbs örnekleyici); makaledeki DINA ile birebir aynı olmayabilir.
-- IRT-2PL: MAP (L-BFGS), önseller zayıf; gradyan sayısal olarak doğrulandı (check_grad).
-- Makale sayılarıyla birebir karşılaştırma yapılmaz (veri kapalı); yalnızca eğilimler.
-- İlk E1 koşusunda IRT'de `exp` taşma uyarıları vardı (sonuç `clip` ile korunuyordu); `expit`'e
-  geçilip E1 baştan koşuldu, nihai tablolar son koddan gelir.
+- DINA kendi gerçekleştirmemiz (Gibbs); makaledeki "higher-order DINA" ile birebir aynı olmayabilir.
+- IRT-2PL: MAP (L-BFGS); gradyan sayısal olarak doğrulandı.
+- DINA zincirleri tutarlı (4 seed, F1 aralığı ≈0.002; `results/tables/dina_chain_check.csv`).
+
+## MCMC yakınsama kanıtı
+Kaynak: `experiments/proposed/mcmc_convergence.py` -> `results/tables/mcmc_convergence.csv`,
+`mcmc_chain_metrics.csv`, grafik `results/figures/mcmc_trace.png`. Kurulum: 4 zincir x {FrcSub, sentetik} x
+{FuzzyCDF-orig, MFCD-core}, %60 eğitim, 3000 adım (1500 burn-in), iki başlangıç türü ("dağınık" ve "üretim").
+
+**Sentetik veri: yakınsıyor (tahmin açısından).** Log-olabilirlik R-hat 1.000-1.010; θ için R-hat en fazla 1.027;
+dört zincirin test F1 değerleri arasında fark ≤ 0.002. Ama α, β, slip, guess ve özellikle μ için R-hat > 1.1 olan
+parametreler var (MFCD-core, dağınık: α 7/25, β 9/25, slip 12/50, guess 9/50, μ 60/129). Bu parametreler zayıf
+belirlenmiş (farklı değerler aynı tahmini veriyor), yani **parametre yorumu güvenilmez, tahmin güvenilir**.
+Rapora "bireysel μ, α, β değerlerini yorumlamıyoruz" cümlesi girmeli.
+
+**FrcSub: yakınsama sorunu var.** Dağınık başlangıçta log-olabilirlik R-hat 2.04 (FuzzyCDF-orig) ve 1.68 (MFCD-core);
+bir zincir (zincir 2) uzun süre daha kötü bir platoda kalıyor (log-olabilirlik ≈ -2450 vs ≈ -2300). Üretim
+başlangıcında FuzzyCDF-orig iyi (R-hat 1.05, F1 aralığı 0.847-0.848), MFCD-core kötü (R-hat 2.16; 4 zincirden
+biri kötü çukurda, F1 0.830 vs 0.844-0.847). Bu yüzden FrcSub'da 3 başlangıç + en iyi eğitim olabilirliği kullanılır.
+
+**Çok modluluğun boyutu (E1, 120 MH koşusu):** 3 başlangıcın eğitim log-olabilirlik ortalamaları arasındaki fark > 30
+olan koşu sayısı: MFCD-core 39/60, FuzzyCDF-orig 5/60. Yani "yakınsamayan" (başlangıca duyarlı) koşu oranı MFCD-core
+için yüksek. 3 başlangıç bunu azaltır ama garanti etmez.
+
+**Sürüklenme ölçüsü (`ll_surukleme`) kısıtı:** Burn-in sonrası izin iki yarısının ortalama farkı / std. Seçilen zincirde
+120 koşunun 46'sında > 0.5. Ancak çukurda *yatay* giden zinciri yakalamaz (üretim başlangıcında çukurdaki zincirin
+ölçüsü 0.41 idi). Bu yüzden asıl kanıt R-hat ve zincirler arası düzey farkıdır; sürüklenme yardımcı bir göstergedir.

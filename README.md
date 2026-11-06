@@ -58,30 +58,42 @@ Testler: `python3 -m pytest -q`. Deney komutları [Reproduction Experiments](#re
 
 ```bash
 python3 -m src.data_frcsub                 # veriyi indir ve doğrula
-python3 -m experiments.baseline.e1_frcsub  # 240 koşu (~5 dk, 10 süreç)
+python3 -m experiments.baseline.e1_frcsub  # 240 koşu (~7 dk, 10 süreç)
 python3 -m experiments.baseline.plot_e1    # grafik
 python3 -m experiments.baseline.e1_table   # tablo
+python3 -m experiments.proposed.mcmc_convergence   # yakınsama kanıtı (4 zincir, R-hat, iz grafiği)
 ```
+
+FrcSub'da iki MH modeli (FuzzyCDF-orig, MFCD-core) 3 farklı başlangıçla çalıştırılır ve eğitim olabilirliği en
+yüksek zincir seçilir (süreler 3 başlangıcın toplamıdır). Gerekçe: MH zincirleri bu veride bazen kötü bir yerel
+çukura düşüyor (aşağıda "MCMC convergence").
 
 | Eğitim oranı | Model | PRE | Recall | F1 | MAE | RMSE | Süre (sn) |
 |---|---|---|---|---|---|---|---|
-| 50% | IRT-2PL | 0.814 ± 0.006 | 0.852 ± 0.007 | 0.832 ± 0.002 | 0.242 ± 0.001 | 0.367 ± 0.002 | 0.04 ± 0.01 |
-| 50% | DINA | 0.844 ± 0.005 | 0.755 ± 0.004 | 0.797 ± 0.003 | 0.302 ± 0.002 | 0.383 ± 0.001 | 1.76 ± 0.08 |
-| 50% | FuzzyCDF-orig | 0.820 ± 0.006 | 0.868 ± 0.005 | 0.843 ± 0.003 | 0.260 ± 0.001 | 0.357 ± 0.002 | 8.27 ± 0.07 |
-| 50% | MFCD-core | 0.820 ± 0.007 | 0.852 ± 0.013 | 0.836 ± 0.008 | 0.265 ± 0.004 | 0.359 ± 0.002 | 10.03 ± 0.07 |
+| 50% | IRT-2PL | 0.814 ± 0.006 | 0.852 ± 0.007 | 0.832 ± 0.002 | 0.242 ± 0.001 | 0.367 ± 0.002 | 0.04 ± 0.00 |
+| 50% | DINA | 0.844 ± 0.005 | 0.755 ± 0.004 | 0.797 ± 0.003 | 0.302 ± 0.002 | 0.383 ± 0.001 | 1.73 ± 0.07 |
+| 50% | FuzzyCDF-orig | 0.819 ± 0.005 | 0.869 ± 0.005 | 0.843 ± 0.003 | 0.259 ± 0.002 | 0.357 ± 0.002 | 27.76 ± 0.09 |
+| 50% | MFCD-core | 0.823 ± 0.006 | 0.859 ± 0.006 | 0.841 ± 0.004 | 0.264 ± 0.002 | 0.357 ± 0.003 | 31.41 ± 0.11 |
 | 60% | IRT-2PL | 0.815 ± 0.007 | 0.855 ± 0.006 | 0.834 ± 0.005 | 0.241 ± 0.002 | 0.363 ± 0.004 | 0.04 ± 0.01 |
-| 60% | DINA | 0.850 ± 0.006 | 0.780 ± 0.010 | 0.813 ± 0.005 | 0.284 ± 0.003 | 0.372 ± 0.003 | 1.70 ± 0.08 |
-| 60% | FuzzyCDF-orig | 0.823 ± 0.005 | 0.877 ± 0.008 | 0.849 ± 0.005 | 0.253 ± 0.002 | 0.352 ± 0.003 | 8.57 ± 0.05 |
-| 60% | MFCD-core | 0.824 ± 0.007 | 0.858 ± 0.014 | 0.841 ± 0.007 | 0.257 ± 0.004 | 0.354 ± 0.004 | 10.11 ± 0.07 |
+| 60% | DINA | 0.850 ± 0.006 | 0.780 ± 0.010 | 0.813 ± 0.005 | 0.284 ± 0.003 | 0.372 ± 0.003 | 1.70 ± 0.07 |
+| 60% | FuzzyCDF-orig | 0.823 ± 0.005 | 0.877 ± 0.007 | 0.849 ± 0.004 | 0.252 ± 0.002 | 0.352 ± 0.003 | 27.85 ± 0.18 |
+| 60% | MFCD-core | 0.828 ± 0.005 | 0.864 ± 0.007 | 0.845 ± 0.004 | 0.254 ± 0.002 | 0.352 ± 0.003 | 31.49 ± 0.15 |
 | 70% | IRT-2PL | 0.816 ± 0.006 | 0.865 ± 0.007 | 0.840 ± 0.003 | 0.238 ± 0.002 | 0.357 ± 0.003 | 0.04 ± 0.01 |
-| 70% | DINA | 0.845 ± 0.005 | 0.795 ± 0.009 | 0.819 ± 0.005 | 0.272 ± 0.002 | 0.367 ± 0.003 | 1.71 ± 0.04 |
-| 70% | FuzzyCDF-orig | 0.826 ± 0.006 | 0.887 ± 0.007 | 0.856 ± 0.003 | 0.245 ± 0.002 | 0.346 ± 0.003 | 8.59 ± 0.05 |
-| 70% | MFCD-core | 0.830 ± 0.009 | 0.870 ± 0.014 | 0.849 ± 0.006 | 0.248 ± 0.003 | 0.347 ± 0.004 | 10.16 ± 0.04 |
+| 70% | DINA | 0.845 ± 0.005 | 0.795 ± 0.009 | 0.819 ± 0.005 | 0.272 ± 0.002 | 0.367 ± 0.003 | 1.77 ± 0.07 |
+| 70% | FuzzyCDF-orig | 0.827 ± 0.005 | 0.887 ± 0.006 | 0.856 ± 0.003 | 0.245 ± 0.001 | 0.346 ± 0.003 | 27.64 ± 0.23 |
+| 70% | MFCD-core | 0.830 ± 0.008 | 0.873 ± 0.010 | 0.851 ± 0.006 | 0.247 ± 0.002 | 0.346 ± 0.004 | 31.52 ± 0.14 |
 
 ![E1](results/figures/e1_frcsub_f1_rmse.png)
 
-Bulanık modeller (FuzzyCDF-orig, MFCD-core) DINA'yı geçiyor; bu makaledeki eğilimle uyumludur. Dereceli μ'nün
-eklendiği MFCD-core ise FrcSub'da FuzzyCDF-orig'i geçmiyor (F1 farkı küçük ama tutarlı). Bu beklenmeyen sonuç olduğu gibi raporlanmıştır.
+**Makale eğilimleriyle karşılaştırma (özet):** eğitim oranı arttıkça iyileşme ve F1'de DINA < FuzzyCDF eğilimi
+**uyuşuyor**. PRE'de DINA'nın makaledeki gibi en düşük olması **uyuşmuyor** (bizde en yüksek). Dereceli μ'nün eklendiği
+MFCD-core, FrcSub'da FuzzyCDF-orig'i geçmiyor: F1'de küçük ama tutarlı geride (-0.003...-0.005), RMSE'de fark yok.
+Nedenleri ve sınırları [docs/report_notes.md](docs/report_notes.md) içinde tartışılmıştır.
+
+**MCMC convergence:** Sentetik veride tahminler zincirler arasında tutarlı (log-olabilirlik R-hat ≈ 1.00, θ R-hat ≤ 1.03),
+ancak α, β, slip, guess ve μ gibi bireysel parametrelerin bir kısmında R-hat > 1.1 (zayıf belirlenmişlik); bu parametreler
+yorumlanmaz. FrcSub'da zincirlerin bir kısmı kötü bir yerel çukura düşüyor (özellikle MFCD-core). İz grafiği:
+![MCMC trace](results/figures/mcmc_trace.png)
 
 ## Proposed Extension
 - **K1:** Bulanık operatör karşılaştırması (Gödel, çarpım, Łukasiewicz).
