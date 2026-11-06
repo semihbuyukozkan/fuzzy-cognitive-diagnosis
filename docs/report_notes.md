@@ -183,3 +183,12 @@ Yorum: MH tabanlı modeller IRT'den ~2 büyüklük mertebesi, DINA'dan ~5-10 kat
 getiriyor, zaman/süre ağırlıkları ek maliyet getirmiyor (yalnızca olabilirlik ağırlığı). E1'de FrcSub MH modelleri
 3 başlangıçla koşulduğu için orada süre bunun yaklaşık 3 katıdır. E1-K2'deki paralel koşu `sure_sn` sütunları
 birbirleriyle KIYASLANMAZ; süre karşılaştırması yalnızca bu tablodan yapılır.
+
+## K1 döngüsellik kontrolü: sentetik veri ÇARPIM operatörüyle üretildi
+Kaynak: `experiments/proposed/k1_product_veri.py` -> `results/tables/k1_product_{raw,summary,paired}.csv`; üreteç: `generate(operator="product")`
+(`synthetic_product`). Aynı 5 ayar, %60, 10 seed, zaman/süre kapalı, μ=Q. (Veri Gödel verisinden zorlukça farklı: seed 0'da doğru oranı 0.40 vs 0.46.)
+Gödel/Gödel referansına göre eşleştirilmiş fark (F1 / RMSE / AUC): VE=Łuk. +0.0060 (10/10) / +0.0005 (0/10 daha iyi) / -0.0013 (0/10);
+VE=çarpım +0.0028 (8/10) / -0.0001 (8/10) / +0.0002 (6/10); VEYA=çarpım -0.0004 / -0.0000 / +0.0000 (≈ aynı); VEYA=Łuk. -0.0030 / +0.0004 / -0.0007.
+**Yorum:** Gödel verisindeki sıralama (Gödel > çarpım > Łukasiewicz) çarpım verisinde yeniden çıkmadı; Łukasiewicz'in F1 kazancı RMSE/AUC ile desteklenmiyor
+(kalibrasyon/eşik etkisi olasılığı, test edilmedi). Çarpım modeli çarpım verisinde *belirgin* kazanmadı (en fazla +0.0028 F1). Tüm farklar çok küçük;
+operatör sıralaması üretece bağlı, gerçek veride etkisiz. K1'in döngüsellik uyarısını destekler.

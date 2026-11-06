@@ -52,7 +52,8 @@ def load_data(name, seed=0):
     if name == "frcsub":
         R, Q = load_frcsub()
         return dict(R=R, Q=Q, is_subj=np.zeros(R.shape[1], bool), delta_t=None, duration=None)
-    d = generate(seed=seed, with_effects=(name != "synthetic_null"))   # veri seed'i = deney seed'i
+    op = "product" if name == "synthetic_product" else "godel"   # K1 döngüsellik kontrolü
+    d = generate(seed=seed, with_effects=(name != "synthetic_null"), operator=op)   # veri seed'i = deney seed'i
     return dict(R=d.R, Q=d.Q, is_subj=d.is_subjective, delta_t=d.delta_t, duration=d.duration)
 
 

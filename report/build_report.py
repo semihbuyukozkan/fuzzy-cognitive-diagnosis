@@ -45,6 +45,12 @@ def k1():
     return tablo(["Veri", "Ayar", "F1", "RMSE"], rows)
 
 
+def k1_product():
+    s = pd.read_csv(T / "k1_product_summary.csv")
+    rows = [[r.model, pm(r, "F1"), pm(r, "RMSE"), f"{r.AUC_ort:.4f}"] for _, r in s.iterrows()]
+    return tablo(["Ayar (veri: ÇARPIMLA üretilmiş)", "F1", "RMSE", "AUC"], rows)
+
+
 def k2(veri):
     s = pd.read_csv(T / "k2_summary.csv")
     sira = ["hiçbiri", "+bilgi açığı", "+zaman (olabilirlik)", "+zaman (Eş.3 çarpımı)", "+bilgi açığı +zaman",
@@ -85,7 +91,7 @@ def baseline_vs_gelistirilen():
 def main():
     sablon = (KOK / "report" / "report_template.html").read_text(encoding="utf-8")
     dolgu = {"E1": e1(), "K1": k1(), "K2_ETKILI": k2("synthetic"), "K2_KONTROL": k2("synthetic_null"),
-             "E4": e4(), "BASELINE": baseline_vs_gelistirilen()}
+             "E4": e4(), "K1P": k1_product(), "BASELINE": baseline_vs_gelistirilen()}
     for k, v in dolgu.items():
         sablon = sablon.replace("{{" + k + "}}", v)
     assert "{{" not in sablon, "doldurulmamış yer tutucu var"

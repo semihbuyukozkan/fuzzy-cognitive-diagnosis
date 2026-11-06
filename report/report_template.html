@@ -127,7 +127,7 @@ Bu ek ölçütler, ilk K2 sonuçlarında F1 artışının şüpheli görünmesi 
 SHA-256 doğrulaması ve boyut doğrulaması kodda yapılır; ham veri repoya konmaz. <b>Sentetik veri (açıkça sentetik)</b>: 1000 öğrenci, 50 soru (38 okuma, 6 yazma, 6 çeviri), 25 beceri,
 dereceli μ ∈ (0.5, 1], Gödel çıkarımıyla üretilmiş, Δt ~ U(0,180) gün, yetenek kayması 0.6, süre zaman/yetkinlikle ilişkili (etkili varyant). Veri bu faktörlerle üretildiği için onları modelleyen
 yöntem avantajlıdır (döngüsellik); sonuçlar "geri kazanılabilirlik" gösterir, gerçek dünya yararını kanıtlamaz.</p>
-<p><b>Protokol.</b> Her öğrencinin cevaplarının %40-90'ı eğitim, kalanı test; seed 0-9, her model için aynı bölme. E1'de oranlar 0.4-0.9 (raporda 0.5/0.6/0.7), K1 FrcSub'da 0.5/0.6/0.7, K1/K2 sentetikte yalnızca 0.6.
+<p><b>Protokol.</b> Her öğrencinin cevaplarının %40-90'ı eğitim, kalanı test; seed 0-9, her model için aynı bölme. E1'de oranlar 0.4-0.9 (raporda 0.5/0.6/0.7), K1 FrcSub'da 0.5/0.6/0.7, K1/K2 sentetikte (çarpım verisi dahil) yalnızca 0.6.
 MH modelleri FrcSub'da 3 farklı başlangıçla koşulur ve <i>eğitim</i> olabilirliği en yüksek zincir seçilir (test verisine bakılmaz). <b>Ortam:</b> Apple M4 Pro, Python 3.10.11, numpy 1.26.4, scipy 1.11.4, pandas 2.1.4,
 matplotlib 3.8.4 (requirements.txt). Süre ölçümü ayrı, tek işlemli ve tek zincirli bir koşuyla yapılmıştır (E4); deney koşuları 10 işlemde paralel çalıştığı için o koşulardaki süre sütunları kıyaslanmaz.</p>
 
@@ -158,6 +158,13 @@ asıl kanıt R-hat ve zincirler arası düzey farkıdır.</p>
 <figure><img src="../results/figures/k1_operators.png"><figcaption>Şekil 4. K1: Gödel'e göre eşleştirilmiş fark.</figcaption></figure>
 <p>FrcSub'da operatörler pratikte aynıdır (%60'ta F1 0.849 / 0.848 / 0.847; Gödel'e göre fark −0.0007 ... −0.0019, std 0.0014-0.0032; çoğu hata çubuğu sıfırı keser). Sentetik veride sıralama Gödel &gt; çarpım &gt; Łukasiewicz'dir
 (F1 farkları −0.002 ... −0.008, RMSE farkları +0.0005 ... +0.0015), ancak <b>veri Gödel ile üretildiği için bu beklenen bir sonuçtur</b> ve operatörlerin genel üstünlüğünü göstermez. Pratik etki küçüktür (F1 ≤ 0.008).</p>
+<p><b>Döngüsellik kontrolü.</b> Aynı 5 ayar, bu kez veriyi <i>çarpım</i> ailesiyle üreterek tekrarlandı (VE: Π ã<sub>k</sub>, VEYA: 1 − Π(1 − ã<sub>k</sub>); diğer her şey aynı; %60, 10 seed):</p>
+{{K1P}}
+<div class="cap">Tablo 3a. K1, çarpım operatörüyle üretilmiş sentetik veri. Kaynak: results/tables/k1_product_summary.csv. Not: bu veri Gödel verisinden zorlukça farklıdır (genel doğru oranı seed 0'da 0.40, Gödel'de 0.46), bu yüzden mutlak sayılar iki tablo arasında kıyaslanmaz; yalnızca ayarlar arası sıralama kıyaslanır.</div>
+<p>Gödel verisindeki "Gödel &gt; çarpım &gt; Łukasiewicz" sıralaması burada <b>yeniden çıkmadı</b>: VE=Łukasiewicz en yüksek F1'e sahip (Gödel/Gödel'e göre +0.0060, 10/10 seed), ancak RMSE (+0.0005) ve AUC'de (−0.0013) 10 seed'in hiçbirinde daha iyi değildir,
+yani bu F1 kazancı yine eşik/kalibrasyon etkisine benziyor. VE=çarpım F1 +0.0028 (8/10), RMSE −0.0001 (8/10) ve AUC +0.0002 (6/10) ile hafif önde; VEYA=çarpım Gödel ile ayırt edilemez. Tüm farklar çok küçüktür (RMSE ≤ 0.0005, AUC ≤ 0.0013).
+Sonuç: operatör sıralaması üretecin kendisine bağlıdır (Gödel verisinde Gödel öne çıkarken çarpım verisinde çıkmadı) ve gerçek veride de fark yoktur; bu, K1'in "operatör seçimi etkisiz" sonucunu ve döngüsellik uyarısını destekler.
+Çarpım verisinde çarpım modelinin <i>belirgin</i> kazanmaması ayrıca, modelin parametrelerinin (özellikle α, β, μ) zayıf belirlenmiş olmasıyla da uyumludur (Bölüm 8.2).</p>
 
 <h3>8.4 K2: faktör ablation'ı ve negatif kontrol (sentetik, %60, 10 seed)</h3>
 <p><b>Zaman/süre etkili veri:</b></p>
@@ -203,7 +210,7 @@ bir kalibrasyon yapaylığı olduğudur. Bu, "makale yanlıştır" demek değild
 <h2>11. Conclusion</h2>
 <p>Makalenin bulanık çekirdeği (sigmoid üyelik, t-norm/t-conorm, bilgi açığı, slip/guess, MH) sıfırdan gerçekleştirilmiş, test edilmiş ve FrcSub'da baseline'larla karşılaştırılmıştır. Çekirdek IRT-2PL ve DINA'dan RMSE/F1'de iyidir, ancak
 FuzzyCDF-orig'i geçmemiştir; makalenin üç eklemesinin yararı kontrollü deneylerimizde gösterilememiştir. K1'de operatör ailesi gerçek veride etkisizdir; K2'de F1 kazancının kalibrasyon yapaylığı olduğu negatif kontrol ve AUC ile gösterilmiştir.
-Gelecek çalışma: süreyi cevabın olasılığına bağlayan bir model; çarpımla üretilmiş sentetik veride K1'in tekrarı; tüm eğitim oranlarında K1/K2; makalenin ağırlık formüllerinin yazarlarla netleştirilmesi; MAKT'ın ayrıştırılmış etkisi.</p>
+Gelecek çalışma: süreyi cevabın olasılığına bağlayan bir model; tüm eğitim oranlarında K1/K2; makalenin ağırlık formüllerinin yazarlarla netleştirilmesi; MAKT'ın ayrıştırılmış etkisi.</p>
 
 <h2>Generative AI Usage Disclosure</h2>
 <p>Bu projede üretken yapay zekâ aracı <b>Claude Code</b> (Anthropic) kullanılmıştır: kodun yazılması ve hata ayıklama, deney tasarımının tartışılması, bulanık mantık kavramlarının açıklanması, istatistiksel

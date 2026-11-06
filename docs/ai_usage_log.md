@@ -16,3 +16,6 @@ Raporun "Generative AI Usage Disclosure" bölümü bu dosyadan beslenecektir.
 - Claude Code ile yönergenin 11 bölümüne göre rapor (report/report_template.html) ve derleyici (report/build_report.py) yazıldı;
   tablolar CSV'lerden otomatik üretilir, PDF Chrome (headless) ile alınır. Kaynaklar web aramasıyla doğrulandı (references/README.md).
 - Yazar kontrol listesi: rapordaki her cümlenin repodaki sonuçla uyumu, Generative AI Disclosure metni ve kaynakların okunması yazar tarafından yapılmalıdır.
+
+## K1 döngüsellik kontrolü (2026-11-07)
+- Claude Code ile `generate(operator="product")`, `experiments/proposed/k1_product_veri.py` ve test yazıldı; 50 koşu çalıştırıldı, sonuçlar rapora (Tablo 3a) ve notlara işlendi.
