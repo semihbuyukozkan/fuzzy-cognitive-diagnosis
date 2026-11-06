@@ -1,0 +1,7 @@
+# Python 3.10 ile uyumlu sürümler
+numpy==1.26.4
+scipy==1.11.4
+pandas==2.1.4
+matplotlib==3.8.4
+tqdm==4.66.4
+pytest==8.2.2
