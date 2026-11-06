@@ -19,7 +19,19 @@ Bir öğrencinin henüz çözmediği bir alıştırmadaki başarısını, geçmi
 Makalenin MFCD (geliştirilmiş fuzzy cognitive diagnosis) bileşeni: sigmoid üyelik fonksiyonu, objektif sorularda bulanık VE (t-norm), subjektif sorularda bulanık VEYA (t-conorm), bilgi açığı, slip/guess parametreleri ve Metropolis-Hastings ile parametre kestirimi. Dikkat tabanlı MAKT bileşeni **bilinçli olarak kapsam dışıdır**.
 
 ## Fuzzy System Architecture
-_Aşama A3'te eklenecek (şema ve açıklama)._
+Her öğrenci-soru çifti için akış (ayrıntı: [src/mfcd.py](src/mfcd.py)):
+
+```
+θ_i, α_k, β_k --(sigmoid üyelik, Eş.1)--> a_ik  (öğrencinin beceri k'daki yeterlilik derecesi)
+a_ik, μ_jk    --(beceri katkısı)--------> ã_ijk
+ã_ijk         --(bulanık VE: objektif / VEYA: subjektif)--> η_ij
+η_ij, s_j, g_j --(slip / guess)---------> P(r_ij = 1) = (1-s_j) η_ij + g_j (1-η_ij)
+```
+- **Bulanık küme / üyelik:** "beceri k'yı bilenler" kümesinde öğrencinin üyelik derecesi 0-1 arasındadır.
+- **VE (t-norm):** objektif sorular tüm gerekli becerileri ister. Gödel: min, çarpım: a·b, Łukasiewicz: max(0, a+b-1).
+- **VEYA (t-conorm):** subjektif sorularda bir beceri diğerini telafi edebilir. Gödel: max, olasılıksal toplam: a+b-ab, Łukasiewicz: min(1, a+b).
+- **Bilgi açığı:** objektif soruda `ã = 1 - μ(1 - a)`; Gödel ile birleşince makaledeki Eş. 8-9 elde edilir.
+- Zaman ve cevap süresi, gözlemlerin olabilirlik ağırlığı olarak kullanılır.
 
 ## Dataset
 - **FrcSub** (gerçek veri, kesir çıkarma): indirme betiği ile alınır, repoya konmaz.
