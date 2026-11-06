@@ -100,3 +100,31 @@ için yüksek. 3 başlangıç bunu azaltır ama garanti etmez.
 **Sürüklenme ölçüsü (`ll_surukleme`) kısıtı:** Burn-in sonrası izin iki yarısının ortalama farkı / std. Seçilen zincirde
 120 koşunun 46'sında > 0.5. Ancak çukurda *yatay* giden zinciri yakalamaz (üretim başlangıcında çukurdaki zincirin
 ölçüsü 0.41 idi). Bu yüzden asıl kanıt R-hat ve zincirler arası düzey farkıdır; sürüklenme yardımcı bir göstergedir.
+
+## K1 (ANA KATKI): bulanık operatör karşılaştırması
+Kaynak: `experiments/proposed/k1_operators.py` -> `results/tables/k1_{raw,summary,paired}.csv`; grafik:
+`results/figures/k1_operators.png` (`plot_k1.py`). Model: μ = Q (açık faktörü kapalı), zaman/süre kapalı; yalnızca operatör
+değişir. Her ayar sıfırdan eğitilir; aynı seed, aynı eğitim/test bölmesi, aynı hiperparametre. FrcSub: yalnızca VE
+(3 aile, oranlar 0.5/0.6/0.7, FrcSub'da 3 başlangıç); sentetik (zaman/süre etkili): VE ve VEYA, oran 0.6, 5 ayar.
+Karşılaştırma **eşleştirilmiş fark** ile (aynı seed'deki Gödel koşusuyla fark; seed'ler arası veri değişkenliği çıkar).
+
+**FrcSub (gerçek veri):** operatörler pratikte aynı. %60'ta F1: Gödel 0.849, çarpım 0.848, Łukasiewicz 0.847;
+RMSE 0.352 / 0.352 / 0.353. Gödel'e göre F1 farkları -0.0007 ... -0.0019 (std 0.0014-0.0032; hata çubukları çoğunlukla
+sıfırı kesiyor; diğer operatörün Gödel'i geçtiği seed sayısı 1-5/10). Yani fark seed gürültüsü düzeyinde.
+**Sentetik (oran 0.6):** F1: Gödel/Gödel 0.618; VEYA=çarpım 0.616 (-0.0019); VEYA=Łuk. 0.614 (-0.0042);
+VE=çarpım 0.613 (-0.0050); VE=Łuk. 0.610 (-0.0076). RMSE farkları +0.0005 ... +0.0015 (kötüleşme). Gödel dışındaki ayarlar
+10 seed'in 10'unda (VEYA=çarpım için 9'unda) Gödel'den kötü. Sıralama her iki katmanda **Gödel > çarpım > Łukasiewicz**;
+VE katmanı VEYA katmanından daha duyarlı.
+
+**Yorum ve sınırlar (rapora girecek):**
+- **Döngüsellik:** Sentetik veriyi Gödel (min / ağırlıklı max) ile ürettiğimiz için Gödel'in kazanması beklenen bir
+  sonuçtur; operatörlerin gerçek dünyadaki üstünlüğünü göstermez. Gerçek veri (FrcSub) operatörler arasında anlamlı
+  fark bulamadı.
+- Mutlak farklar küçük (F1 ≤ 0.008, RMSE ≤ 0.0015): pratik etki sınırlı.
+- Sezgisel açıklama (test edilmemiş hipotez): Łukasiewicz VE'si, birkaç beceri gerektiren sorularda toplamdan (n-1)
+  çıkardığı için η'yı sık sık tam 0'a indirir; bu bölgede olasılık sabit (≈ guess) kalır ve öğrenciler ayırt edilemez.
+  Gödel'de ise yalnızca en zayıf beceri belirleyicidir.
+- FrcSub'da yalnızca VE test edilebildi (subjektif soru yok). VEYA yalnızca sentetikte.
+- **Süre sütunları karşılaştırılamaz:** 10 süreç aynı anda koştuğundan koşular birbirini farklı oranda yavaşlattı (ör. aynı
+  iş 105 sn ile 302 sn arasında ölçüldü). Süre karşılaştırması (E4) ayrı, tek süreçli ve ayrı bir koşuyla yapılacak.
+- Log-olabilirlik 0'a gitmedi: Łukasiewicz'de η = 0 olsa bile P ≥ guess > 0 (testle doğrulandı, `tests/test_a6.py`).
