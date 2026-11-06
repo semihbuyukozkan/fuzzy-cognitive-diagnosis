@@ -1,0 +1,2 @@
+seed,egitim_orani,sure_sn,theta_korelasyonu_MH,theta_korelasyonu_toplam_skor,test_dogruluk_MH,test_dogruluk_gercek_parametre,test_dogruluk_cogunluk,ll_300_500,ll_son_800,kabul_theta,kabul_alpha_beta,kabul_slip_guess,kabul_mu
+0,0.6,64.9,0.863,0.837,0.664,0.674,0.532,-17946.6,-17949.0,0.5,0.54,0.44,0.26

@@ -22,3 +22,19 @@ yalnızca betik çıktısından yazılır.
 - Python 3.10.11 (sistem), paketler `requirements.txt` ile; venv kullanılmadı.
 - Bir yan not: `.venv` Python 3.13 ile açılınca pinli numpy/scipy derlenemedi (3.13 için uygun
   paket yok). Rapora girmeyecek, ama temiz kurulum testinde (A8) Python 3.10 belirtilmeli.
+
+## A4: Metropolis-Hastings (MCMC)
+- Uygulama: `src/mcmc.py`. Random-walk MH; θ ve (s, g, μ) vektörel, α/β beceri beceri güncellenir.
+- Önseller bizim seçimimiz: θ~N(0,1), β~N(0,1), log α~N(0,0.5²), s,g~U(0,0.4), μ~U(0,1].
+- Zincir: 1500 adım, ilk 700 burn-in, her 10. örnek (tahmin = posterior ortalama P).
+- Adım boyları kabul oranı ~0.25-0.55 olacak şekilde elle ayarlandı (θ 0.9, α/β 0.25, μ 0.15).
+- **Yakınsama sorunu çıkmadı**, gradyan tabanlı MAP'e geçmek gerekmedi.
+- Pilot sonuçlar (sentetik, seed 0, %60 eğitim; kaynak: `experiments/proposed/a4_mh_recovery.py`,
+  `results/tables/a4_mh_recovery.csv`):
+  θ korelasyonu 0.863 (toplam skor 0.837); test doğruluğu 0.664 (gerçek parametreler 0.674,
+  çoğunluk sınıfı 0.532); log-olabilirlik 300-500 ve son 800 adımda aynı düzeyde (-17947 / -17949).
+- Yorum: Test doğruluğu gerçek parametreli "oracle" tahmine yakın; kalan fark ikili cevaplardaki
+  slip/guess gürültüsünden gelir. Tek seed; makalede istenen ≥10 seed deneyi A5-A6'da yapılacak.
+- Süre: ~65 sn / zincir (1500 adım). Deney ızgarası bunu hesaba katarak kurulacak.
+- Not: üretecin zaman kayması (drift) modele verilmediği için ağırlıksız model bunu görmez;
+  zaman ağırlığının etkisi K2 ablation'ında ölçülecek.
