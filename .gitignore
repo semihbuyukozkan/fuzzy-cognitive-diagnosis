@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# macOS / editör
+.DS_Store
+.vscode/
+
+# Gizli bilgiler
+.env
+*.key
+
+# Ham veri (lisans belirsiz; indirme betiği ile alınır)
+data/raw/
+*.rar
+*.zip
+
+# Makale PDF'i (CC BY-NC-ND, repoya konmaz)
+references/*.pdf
