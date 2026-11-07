@@ -10,7 +10,8 @@ Kullanım örnekleri:
   python3 -m demo.canli_demo                          # öğrenci 0, soru 0
   python3 -m demo.canli_demo --ogrenci 12 --soru 5
   python3 -m demo.canli_demo --ogrenci 12 --soru 5 --theta 2.0     # "ya yeteneği yüksek olsaydı?"
-  python3 -m demo.canli_demo --soru 5 --operator product            # VE operatörünü değiştir
+  python3 -m demo.canli_demo --soru 3 --theta 0.3                   # çok becerili soruda 3 operatörün η'sı yan yana
+  python3 -m demo.canli_demo --soru 5 --operator product            # modeli VE=çarpım ile baştan eğit
 """
 import argparse
 import os
@@ -60,6 +61,10 @@ def main():
     print(f"\n2) KURAL / ÇIKARIM: \"{kural}\"  ({a.operator} t-norm; Gödel = min)")
     print(f"   η = {eta:.3f}   (soruyu çözmek için gereken tüm becerilere sahip olma derecesi)")
 
+    if len(beceriler) > 1:                       # aynı üyeliklerle üç operatör yan yana (saf operatör farkı)
+        diger = {k: float(and_reduce(A[beceriler][None, :], k, axis=-1)[0]) for k in ("godel", "product", "lukasiewicz")}
+        print("   (aynı üyeliklerle) " + ", ".join(f"{k}: {v:.3f}" for k, v in diger.items())
+              + "  -> Gödel ≥ çarpım ≥ Łukasiewicz")
     s, g = p.slip[j], p.guess[j]
     P = (1 - s) * eta + g * (1 - eta)
     print(f"\n3) SLIP/GUESS: P(doğru) = (1-{s:.2f})·{eta:.3f} + {g:.2f}·(1-{eta:.3f}) = {P:.3f}")
