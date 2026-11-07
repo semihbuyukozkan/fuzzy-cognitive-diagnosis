@@ -2,7 +2,7 @@
 
 Bulanık Mantık dersi dönem projesi: bir makalenin bulanık bilişsel tanı çekirdeğinin yeniden gerçekleştirilmesi ve özgün katkı.
 
-> **Durum:** Tüm deneyler tamamlandı. Teknik rapor: [report/report.pdf](report/report.pdf) (tabloları `python3 -m report.build_report` CSV'lerden üretir).
+> **Durum:** Tüm deneyler tamamlandı. Teknik rapor: [report/report.pdf](report/report.pdf) · Sunum: [presentation/presentation.pdf](presentation/presentation.pdf) · Savunma hazırlığı: [docs/savunma_hazirlik.md](docs/savunma_hazirlik.md) (tabloları `python3 -m report.build_report` CSV'lerden üretir).
 
 ## Student Information
 - **Ad Soyad:** Musa Semih Büyüközkan
@@ -108,6 +108,7 @@ python3 -m experiments.proposed.k1_product_veri   # döngüsellik kontrolü (ça
 python3 -m experiments.proposed.k2_ablation  && python3 -m experiments.proposed.plot_k2 && python3 -m experiments.proposed.plot_k2_kalibrasyon
 python3 -m experiments.baseline.e4_sure      # süre ölçümü (tek işlem; ~10 dk)
 python3 -m report.build_report               # rapor PDF'i
+python3 -m presentation.build_slides         # sunum PDF'i (Chrome gerekir)
 ```
 
 ## Experimental Results

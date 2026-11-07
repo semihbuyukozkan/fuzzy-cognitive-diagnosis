@@ -19,3 +19,8 @@ Raporun "Generative AI Usage Disclosure" bölümü bu dosyadan beslenecektir.
 
 ## K1 döngüsellik kontrolü (2026-11-07)
 - Claude Code ile `generate(operator="product")`, `experiments/proposed/k1_product_veri.py` ve test yazıldı; 50 koşu çalıştırıldı, sonuçlar rapora (Tablo 3a) ve notlara işlendi.
+
+## Sunum ve savunma hazırlığı (2026-11-07)
+- Claude Code ile sunum (presentation/slides_template.html, build_slides.py; 19 slayt, küçük tablolar CSV'den) ve olası soru-cevap listesi (docs/savunma_hazirlik.md) hazırlandı.
+- Canlı demo, aynı üyeliklerle üç operatörü yan yana gösterecek şekilde genişletildi.
+- Yazar yapacaklar: sunumu kendi sözleriyle prova etmek, soru-cevap listesini okuyup anlamak.
