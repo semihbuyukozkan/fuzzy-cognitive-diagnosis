@@ -67,7 +67,7 @@ python3 -m experiments.proposed.mcmc_convergence   # yakınsama kanıtı (4 zinc
 ```
 
 FrcSub'da iki MH modeli (FuzzyCDF-orig, MFCD-core) 3 farklı başlangıçla çalıştırılır ve eğitim olabilirliği en
-yüksek zincir seçilir Gerekçe: MH zincirleri bu veride bazen kötü bir yerel
+yüksek zincir seçilir. Gerekçe: MH zincirleri bu veride bazen kötü bir yerel
 çukura düşüyor (aşağıda "MCMC convergence").
 
 | Eğitim oranı | Model | PRE | Recall | F1 | MAE | RMSE |
