@@ -31,7 +31,7 @@ Makalenin (Zhang & Wang) kendi kaynakçasından **kopyalama yapılmadı**; orada
 
 ## Harici kod
 Harici koddan yararlanılmadı; makale yazarlarının resmi kodu kullanılmadı. Tüm kod bu projede yazıldı
-(AI yardımıyla; bkz. docs/ai_usage_log.md).
+(AI yardımıyla; ayrıntı raporun Generative AI Usage Disclosure bölümünde).
 
 ## Doğrulama bekleyenler (rapora girmedi)
 - 2022 tarihli "A survey on deep learning based knowledge tracing" (*Knowl.-Based Syst.*, vol. 258, 110036): yazar listesi doğrulanmadı.
