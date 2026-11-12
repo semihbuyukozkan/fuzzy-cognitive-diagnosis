@@ -1,4 +1,4 @@
-# Sunum konuşma notları (12 slayt, yaklaşık 15-17 dakika)
+# Sunum konuşma notları (12 slayt + teşekkür slaydı, yaklaşık 15-17 dakika)
 
 Kendi cümlelerinizle söyleyin; aşağıdakiler iskelet. Süre: slayt başına ~1-1,5 dk, demo ~3 dk.
 
@@ -25,5 +25,7 @@ Kendi cümlelerinizle söyleyin; aşağıdakiler iskelet. Süre: slayt başına 
 **11. Sonuç ve sınırlar (1,5 dk).** Çekirdek çalışıyor; makalenin eklemelerinin yararı bizim koşullarımızda yeniden üretilemedi (makale yanlış demiyorum: veri, MAKT ve kesin formül bende yok). Sınırlar: MAKT yok, ağırlık yorumu benim, sentetik veri döngüsel ve yalnızca %60 oranı, FrcSub'da çok modluluk, 10 seed. Gelecek: süreyi cevabın olasılığına bağlayan model, öznel sorulu gerçek veri.
 
 **12. Demo (3 dk).** (1) Bir öğrenci ve soru: üyelik derecelerini, VE'yi, olasılığı, kararı göster. (2) `--theta 2.0`: yetenek yükselince derece 1'e, olasılık ~1'e gider. (3) Dört becerili soruda üç operatörün η'sını yan yana göster: Gödel ≥ çarpım ≥ Łukasiewicz. Sayıların deney sonucu değil, kısa bir koşu olduğunu söyleyin.
+
+**13. Teşekkürler.** Dinleyicilere teşekkür edip soru-cevaba geçin.
 
 **Olası sorular:** docs/savunma_hazirlik.md
