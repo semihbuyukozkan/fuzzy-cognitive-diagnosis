@@ -2,8 +2,6 @@
 
 Bulanık Mantık dersi dönem projesi: bir makalenin bulanık bilişsel tanı çekirdeğinin yeniden gerçekleştirilmesi ve özgün katkı.
 
-> **Durum:** Tüm deneyler tamamlandı. Teknik rapor: [report/report.pdf](report/report.pdf) · Sunum: [presentation/presentation.pdf](presentation/presentation.pdf) · Savunma hazırlığı: [docs/savunma_hazirlik.md](docs/savunma_hazirlik.md) (tabloları `python3 -m report.build_report` CSV'lerden üretir).
-
 ## Student Information
 - **Ad Soyad:** Musa Semih Büyüközkan
 - **Öğrenci No:** 1306230099
