@@ -24,3 +24,7 @@ Raporun "Generative AI Usage Disclosure" bölümü bu dosyadan beslenecektir.
 - Claude Code ile sunum (presentation/slides_template.html, build_slides.py; 19 slayt, küçük tablolar CSV'den) ve olası soru-cevap listesi (docs/savunma_hazirlik.md) hazırlandı.
 - Canlı demo, aynı üyeliklerle üç operatörü yan yana gösterecek şekilde genişletildi.
 - Yazar yapacaklar: sunumu kendi sözleriyle prova etmek, soru-cevap listesini okuyup anlamak.
+
+## Rapor yeniden yazımı (2026-11-12)
+- Kullanıcı isteğiyle rapor, daha sade ve kalın vurgusuz bir dille yeniden yazıldı (yönergenin 11 bölüm başlığı korundu). Sayılar yine CSV'lerden üretilen tablolardan gelir.
+- Sunuma "Teşekkürler" slaydı eklendi.
