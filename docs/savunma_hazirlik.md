@@ -72,7 +72,7 @@ Cevapları kendi cümlelerinizle söyleyin; aşağıdakiler iskelettir. Sayılar
 
 **27. Yazılımın doğruluğunu nasıl kontrol ettiniz?** 69 birim testi: elle hesaplı t-norm/t-conorm değerleri, bilgi açığı min'e indirgeme (rastgele girdilerle, literal formül döngüsüne karşı), Łukasiewicz uç değerleri, gradyan kontrolü, metrikler, veri boyutları; aynı seed'le yeniden koşu birebir aynı sonuç; temiz klon testi.
 
-**28. Üretken yapay zekâ kullandınız mı?** Evet: Claude Code ile kod, hata ayıklama, deney tasarımı tartışması, kavram açıklaması, kaynak doğrulama yardımı. Rapordaki bölümde yazılı (Generative AI Usage Disclosure); `docs/ai_usage_log.md`. Kod ve sonuçlar sizin tarafınızdan anlaşılmış olmalı: demo ve bu soruları kendiniz cevaplayabilmelisiniz.
+**28. Üretken yapay zekâ kullandınız mı?** Evet: Claude Code ile kod, hata ayıklama, deney tasarımı tartışması, kavram açıklaması, kaynak doğrulama yardımı. Rapordaki bölümde yazılı (Generative AI Usage Disclosure). Kod ve sonuçlar sizin tarafınızdan anlaşılmış olmalı: demo ve bu soruları kendiniz cevaplayabilmelisiniz.
 
 **29. Resmi makale kodu kullandınız mı?** Hayır; makale kodu kullanılmadı. Tüm kod bu projede yazıldı. Veri: FrcSub (Wu vd., IJCAI 2015) indirilir, repoya konmaz.
 

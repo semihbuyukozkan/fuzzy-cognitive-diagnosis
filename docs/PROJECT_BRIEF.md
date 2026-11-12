@@ -16,7 +16,7 @@
 4. Harici koddan (EduCDM vb.) bir şey alınırsa kaynağı ve lisansı `references/README.md`'de ve kodda belirt; kendi kodumuzdan ayır.
 5. Gizli bilgi (API anahtarı, token) repoya girmesin. `.gitignore` kullan.
 6. Küçük, anlamlı commit'ler at (yönerge commit geçmişini değerlendiriyor). Tek seferde yükleme yapma.
-7. Yapay zekâ kullanımını `docs/ai_usage_log.md` dosyasına işle (kod geliştirme, hata ayıklama, kavram açıklama vb.). Raporda "Generative AI Usage Disclosure" bölümü bundan beslenecek.
+7. Yapay zekâ kullanımı raporun "Generative AI Usage Disclosure" bölümünde kısaca anlatılır (ayrı bir günlük dosyası tutulmaz).
 8. Kaynakça: yalnızca doğrulanmış kaynaklar. Makalenin kendi kaynakçası **kopyalanmayacak** (bkz. §6).
 9. Python 3, macOS, VS Code. Bağımlılıklar `requirements.txt`'te sürümleriyle.
 
@@ -99,7 +99,7 @@ Başarı ölçütü: baseline'a karşı PRE/Recall/F1/MAE/RMSE ve çalışma sü
 ```
 fuzzy-logic-project/
 ├── README.md  LICENSE  requirements.txt  .gitignore
-├── docs/PROJECT_BRIEF.md  docs/ai_usage_log.md  docs/assumptions.md
+├── docs/PROJECT_BRIEF.md  docs/assumptions.md
 ├── src/            # fuzzy_ops.py, memberships.py, mfcd.py, mcmc.py, baselines.py, data_*.py, metrics.py
 ├── data/           # indirme betiği + README (ham veri lisansa göre)
 ├── experiments/baseline/   experiments/proposed/
